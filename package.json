@@ -1,0 +1,33 @@
+{
+  "name": "turbo-recipes",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "tsx watch src/main/server.ts",
+    "test": "vitest"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.13.1",
+  "dependencies": {
+    "drizzle-orm": "^0.44.3",
+    "fastify": "^5.4.0",
+    "postgres": "^3.4.7"
+  },
+  "devDependencies": {
+    "@types/node": "^24.1.0",
+    "@typescript-eslint/eslint-plugin": "^8.38.0",
+    "@typescript-eslint/parser": "^8.38.0",
+    "dotenv": "^17.2.1",
+    "drizzle-kit": "^0.31.4",
+    "eslint": "^9.31.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.3",
+    "prettier": "^3.6.2",
+    "tsx": "^4.20.3",
+    "typescript": "^5.8.3",
+    "vitest": "^3.2.4"
+  }
+}

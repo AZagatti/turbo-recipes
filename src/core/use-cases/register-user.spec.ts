@@ -1,9 +1,10 @@
 import { it, describe, expect, beforeEach } from 'vitest'
 import { RegisterUserUseCase } from './register-user'
-import { NewUser, UsersRepository } from '../repositories/users-repository'
+import { UsersRepository } from '../repositories/users-repository'
 import { User } from '../entities/user'
 import { UserAlreadyExistsError } from '../errors/user-already-exists-error'
 import { Hasher } from '../repositories/hasher'
+import { NewUser } from '../models'
 
 class FakeHasher implements Hasher {
   async hash(plain: string): Promise<string> {

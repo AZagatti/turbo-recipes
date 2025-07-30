@@ -3,6 +3,13 @@ import { RegisterUserUseCase } from './register-user'
 import { NewUser, UsersRepository } from '../repositories/users-repository'
 import { User } from '../entities/user'
 import { UserAlreadyExistsError } from '../errors/user-already-exists-error'
+import { Hasher } from '../repositories/hasher'
+
+class FakeHasher implements Hasher {
+  async hash(plain: string): Promise<string> {
+    return `${plain}-hashed`
+  }
+}
 
 class InMemoryUsersRepository implements UsersRepository {
   public items: User[] = []
@@ -27,12 +34,14 @@ class InMemoryUsersRepository implements UsersRepository {
 }
 
 let usersRepository: InMemoryUsersRepository
+let fakeHasher: FakeHasher
 let sut: RegisterUserUseCase
 
 describe('Register User Use Case', () => {
   beforeEach(() => {
     usersRepository = new InMemoryUsersRepository()
-    sut = new RegisterUserUseCase(usersRepository)
+    fakeHasher = new FakeHasher()
+    sut = new RegisterUserUseCase(usersRepository, fakeHasher)
   })
 
   it('registers a new user', async () => {

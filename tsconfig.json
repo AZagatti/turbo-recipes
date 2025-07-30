@@ -13,6 +13,9 @@
     "rootDir": "./src",
     "baseUrl": ".",
     "paths": {
+      "@/config": [
+        "src/main/config.ts"
+      ],
       "@/core/*": [
         "src/core/*"
       ],

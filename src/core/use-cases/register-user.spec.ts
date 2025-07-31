@@ -1,38 +1,8 @@
-import { it, describe, expect, beforeEach } from 'vitest'
-import { RegisterUserUseCase } from './register-user'
-import { UsersRepository } from '../repositories/users-repository'
-import { User } from '../entities/user'
+import { beforeEach, describe, expect, it } from 'vitest'
 import { UserAlreadyExistsError } from '../errors/user-already-exists-error'
-import { Hasher } from '../repositories/hasher'
-import { NewUser } from '../models'
-
-class FakeHasher implements Hasher {
-  async hash(plain: string): Promise<string> {
-    return `${plain}-hashed`
-  }
-}
-
-class InMemoryUsersRepository implements UsersRepository {
-  public items: User[] = []
-
-  async findByEmail(email: string) {
-    const user = this.items.find((item) => item.email === email)
-    return user || null
-  }
-
-  async create(user: NewUser) {
-    const newUser = {
-      id: this.items.length + 1,
-      name: user.name,
-      email: user.email,
-      passwordHash: user.passwordHash,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    }
-    this.items.push(newUser)
-    return newUser
-  }
-}
+import { FakeHasher } from './_test/fake-hasher'
+import { InMemoryUsersRepository } from './_test/in-memory-users-repository'
+import { RegisterUserUseCase } from './register-user'
 
 let usersRepository: InMemoryUsersRepository
 let fakeHasher: FakeHasher

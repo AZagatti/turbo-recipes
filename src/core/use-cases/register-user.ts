@@ -2,7 +2,7 @@ import { User } from '../entities/user'
 import { UsersRepository } from '../repositories/users-repository'
 import { Usecase } from './usecase'
 import { UserAlreadyExistsError } from '../errors/user-already-exists-error'
-import { Hasher } from '../repositories/hasher'
+import { Hasher } from '../contracts/hasher'
 export interface RegisterUserRequest {
   name: string
   email: string

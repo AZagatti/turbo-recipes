@@ -17,6 +17,8 @@
     "fastify": "^5.4.0",
     "jose": "^6.0.12",
     "postgres": "^3.4.7",
+    "reflect-metadata": "^0.2.2",
+    "tsyringe": "^4.10.0",
     "zod": "^4.0.13"
   },
   "devDependencies": {

@@ -6,13 +6,14 @@ const envSchema = z.object({
     .enum(['development', 'test', 'production'])
     .default('development'),
   DATABASE_URL: z.url(),
+  JWT_SECRET: z.string(),
   PORT: z.coerce.number().default(3333),
 })
 
 const _env = envSchema.safeParse(process.env)
 
 if (!_env.success) {
-  console.error('❌ Invalid environment variables:', _env.error.format())
+  console.error('❌ Invalid environment variables:', z.treeifyError(_env.error))
   throw new Error('Invalid environment variables.')
 }
 

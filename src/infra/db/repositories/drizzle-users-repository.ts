@@ -3,7 +3,9 @@ import { NewUser, User } from '@/core/models'
 import { db } from '..'
 import { users } from '../schema'
 import { eq } from 'drizzle-orm'
+import { injectable } from 'tsyringe'
 
+@injectable()
 export class DrizzleUsersRepository implements UsersRepository {
   async findByEmail(email: string): Promise<User | null> {
     const result = await db.select().from(users).where(eq(users.email, email))

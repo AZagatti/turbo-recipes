@@ -25,7 +25,9 @@
       "@/main/*": [
         "src/main/*"
       ]
-    }
+    },
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true
   },
   "include": [
     "src"

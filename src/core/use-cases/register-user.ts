@@ -3,6 +3,8 @@ import { UsersRepository } from '../repositories/users-repository'
 import { Usecase } from './usecase'
 import { UserAlreadyExistsError } from '../errors/user-already-exists-error'
 import { Hasher } from '../contracts/hasher'
+import { injectable, inject } from 'tsyringe'
+
 export interface RegisterUserRequest {
   name: string
   email: string
@@ -13,11 +15,14 @@ export interface RegisterUserResponse {
   user: User
 }
 
+@injectable()
 export class RegisterUserUseCase
   implements Usecase<RegisterUserRequest, RegisterUserResponse>
 {
   constructor(
+    @inject('UsersRepository')
     private usersRepository: UsersRepository,
+    @inject('Hasher')
     private hasher: Hasher,
   ) {}
 

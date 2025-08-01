@@ -4,6 +4,7 @@ import { UsersRepository } from '../repositories/users-repository'
 import { Usecase } from './usecase'
 
 import { TokenGenerator } from '../contracts/token-generator'
+import { inject, injectable } from 'tsyringe'
 
 export interface AuthenticateUserRequest {
   email: string
@@ -14,12 +15,16 @@ export interface AuthenticateUserResponse {
   token: string
 }
 
+@injectable()
 export class AuthenticateUserUseCase
   implements Usecase<AuthenticateUserRequest, AuthenticateUserResponse>
 {
   constructor(
+    @inject('UsersRepository')
     private usersRepository: UsersRepository,
+    @inject('HashComparer')
     private hashComparer: HashComparer,
+    @inject('TokenGenerator')
     private tokenGenerator: TokenGenerator,
   ) {}
 

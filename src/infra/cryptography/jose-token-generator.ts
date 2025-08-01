@@ -1,7 +1,9 @@
 import { TokenGenerator } from '@/core/contracts/token-generator'
 import { env } from '@/config'
 import { SignJWT } from 'jose'
+import { injectable } from 'tsyringe'
 
+@injectable()
 export class JoseTokenGenerator implements TokenGenerator {
   async generate(payload: { sub: string }): Promise<string> {
     const secret = new TextEncoder().encode(env.JWT_SECRET)

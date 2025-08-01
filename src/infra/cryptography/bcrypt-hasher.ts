@@ -1,7 +1,9 @@
 import { Hasher } from '@/core/contracts/hasher'
 import { HashComparer } from '@/core/contracts/hash-comparer'
 import { compare, hash } from 'bcryptjs'
+import { injectable } from 'tsyringe'
 
+@injectable()
 export class BcryptHasher implements Hasher, HashComparer {
   private HASH_SALT_LENGTH = 8
 

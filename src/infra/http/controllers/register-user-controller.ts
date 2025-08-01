@@ -1,9 +1,14 @@
 import { FastifyRequest, FastifyReply } from 'fastify'
 import { z } from 'zod'
 import { RegisterUserUseCase } from '@/core/use-cases/register-user'
+import { inject, injectable } from 'tsyringe'
 
+@injectable()
 export class RegisterUserController {
-  constructor(private registerUserUseCase: RegisterUserUseCase) {}
+  constructor(
+    @inject(RegisterUserUseCase)
+    private registerUserUseCase: RegisterUserUseCase,
+  ) {}
 
   async handle(request: FastifyRequest, reply: FastifyReply) {
     const registerBodySchema = z.object({

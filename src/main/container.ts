@@ -10,13 +10,12 @@ import { BcryptHasher } from '@/infra/cryptography/bcrypt-hasher'
 import { TokenGenerator } from '@/core/contracts/token-generator'
 import { JoseTokenGenerator } from '@/infra/cryptography/jose-token-generator'
 
-const hasher = new BcryptHasher()
-
 container.registerSingleton<UsersRepository>(
   'UsersRepository',
   DrizzleUsersRepository,
 )
 
+const hasher = new BcryptHasher()
 container.registerInstance<Hasher>('Hasher', hasher)
 container.registerInstance<HashComparer>('HashComparer', hasher)
 container.registerSingleton<TokenGenerator>(

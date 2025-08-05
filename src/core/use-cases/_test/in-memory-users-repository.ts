@@ -9,6 +9,11 @@ export class InMemoryUsersRepository implements UsersRepository {
     return user || null
   }
 
+  async findById(id: number) {
+    const user = this.items.find((item) => item.id === id)
+    return user || null
+  }
+
   async create(user: NewUser) {
     const newUser = {
       id: this.items.length + 1,

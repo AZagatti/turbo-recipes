@@ -9,10 +9,16 @@ import { BcryptHasher } from '@/infra/cryptography/bcrypt-hasher'
 
 import { TokenGenerator } from '@/core/contracts/token-generator'
 import { JoseTokenGenerator } from '@/infra/cryptography/jose-token-generator'
+import { RecipesRepository } from '@/core/repositories/recipes-repository'
+import { DrizzleRecipesRepository } from '@/infra/db/repositories/drizzle-recipes-repository'
 
 container.registerSingleton<UsersRepository>(
   'UsersRepository',
   DrizzleUsersRepository,
+)
+container.registerSingleton<RecipesRepository>(
+  'RecipesRepository',
+  DrizzleRecipesRepository,
 )
 
 const hasher = new BcryptHasher()

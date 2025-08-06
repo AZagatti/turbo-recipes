@@ -7,6 +7,22 @@ import { eq } from 'drizzle-orm'
 
 @injectable()
 export class DrizzleRecipesRepository implements RecipesRepository {
+  async findMany({
+    page,
+    limit,
+  }: {
+    page: number
+    limit: number
+  }): Promise<Recipe[]> {
+    const recipesList = await db
+      .select()
+      .from(recipes)
+      .limit(limit)
+      .offset((page - 1) * limit)
+
+    return recipesList
+  }
+
   async findById(id: number): Promise<Recipe | null> {
     const result = await db.select().from(recipes).where(eq(recipes.id, id))
 

@@ -5,6 +5,7 @@ import z, { ZodError } from 'zod'
 import { UserAlreadyExistsError } from '@/core/errors/user-already-exists-error'
 import { appRoutes } from '@/infra/http/routes'
 import { env } from '@/config'
+import { ResourceNotFoundError } from '@/core/errors/resource-not-found-error'
 
 const app = fastify({
   logger:
@@ -28,6 +29,10 @@ app.setErrorHandler((error, request, reply) => {
 
   if (error instanceof UserAlreadyExistsError) {
     return reply.status(409).send({ message: error.message })
+  }
+
+  if (error instanceof ResourceNotFoundError) {
+    return reply.status(404).send({ message: error.message })
   }
 
   console.error(error)

@@ -3,6 +3,7 @@ import { RegisterUserController } from './controllers/register-user-controller'
 import { container } from 'tsyringe'
 import { AuthenticateUserController } from './controllers/authenticate-user-controller'
 import { CreateRecipeController } from './controllers/create-recipe-controller'
+import { GetRecipeByIdController } from './controllers/get-recipe-by-id-controller'
 
 export async function appRoutes(app: FastifyInstance) {
   const registerUserController = container.resolve(RegisterUserController)
@@ -10,6 +11,7 @@ export async function appRoutes(app: FastifyInstance) {
     AuthenticateUserController,
   )
   const createRecipeController = container.resolve(CreateRecipeController)
+  const getRecipeByIdController = container.resolve(GetRecipeByIdController)
 
   app.post('/users', (request, reply) =>
     registerUserController.handle(request, reply),
@@ -21,5 +23,9 @@ export async function appRoutes(app: FastifyInstance) {
 
   app.post('/recipes', (request, reply) =>
     createRecipeController.handle(request, reply),
+  )
+
+  app.get('/recipes/:id', (request, reply) =>
+    getRecipeByIdController.handle(request, reply),
   )
 }

@@ -9,6 +9,11 @@ export class InMemoryRecipesRepository implements RecipesRepository {
     return recipe || null
   }
 
+  async findMany({ page, limit }: { page: number; limit: number }) {
+    const recipes = this.items.slice((page - 1) * limit, page * limit)
+    return recipes
+  }
+
   async create(data: NewRecipe): Promise<Recipe> {
     const newRecipe = {
       id: this.items.length + 1,

@@ -6,6 +6,7 @@ import { UserAlreadyExistsError } from '@/core/errors/user-already-exists-error'
 import { appRoutes } from '@/infra/http/routes'
 import { env } from '@/config'
 import { ResourceNotFoundError } from '@/core/errors/resource-not-found-error'
+import { NotAllowedError } from '@/core/errors/not-allowed-error'
 
 const app = fastify({
   logger:
@@ -33,6 +34,10 @@ app.setErrorHandler((error, request, reply) => {
 
   if (error instanceof ResourceNotFoundError) {
     return reply.status(404).send({ message: error.message })
+  }
+
+  if (error instanceof NotAllowedError) {
+    return reply.status(403).send({ message: error.message })
   }
 
   console.error(error)

@@ -33,4 +33,16 @@ export class DrizzleRecipesRepository implements RecipesRepository {
     const result = await db.insert(recipes).values(data).returning()
     return result[0]
   }
+
+  async save(recipe: Recipe): Promise<void> {
+    await db
+      .update(recipes)
+      .set({
+        title: recipe.title,
+        ingredients: recipe.ingredients,
+        method: recipe.method,
+        updatedAt: new Date(),
+      })
+      .where(eq(recipes.id, recipe.id))
+  }
 }

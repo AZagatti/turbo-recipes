@@ -25,14 +25,14 @@ export class CreateRecipeController {
     const authorId = 1
 
     try {
-      await this.createRecipeUseCase.execute({
+      const result = await this.createRecipeUseCase.execute({
         title,
         ingredients,
         method,
         authorId,
       })
 
-      return reply.status(201).send()
+      return reply.status(201).send(result)
     } catch (error) {
       if (error instanceof AuthorNotFoundError) {
         return reply.status(404).send({ message: error.message })

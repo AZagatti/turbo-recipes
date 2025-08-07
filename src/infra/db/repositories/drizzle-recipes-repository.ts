@@ -14,19 +14,36 @@ export class DrizzleRecipesRepository implements RecipesRepository {
     page: number
     limit: number
   }): Promise<Recipe[]> {
-    const recipesList = await db
-      .select()
-      .from(recipes)
-      .limit(limit)
-      .offset((page - 1) * limit)
+    const recipesList = await db.query.recipes.findMany({
+      limit,
+      offset: (page - 1) * limit,
+      with: {
+        author: {
+          columns: {
+            id: true,
+            name: true,
+          },
+        },
+      },
+    })
 
     return recipesList
   }
 
   async findById(id: number): Promise<Recipe | null> {
-    const result = await db.select().from(recipes).where(eq(recipes.id, id))
+    const recipe = await db.query.recipes.findFirst({
+      where: eq(recipes.id, id),
+      with: {
+        author: {
+          columns: {
+            id: true,
+            name: true,
+          },
+        },
+      },
+    })
 
-    return result[0] || null
+    return recipe || null
   }
 
   async create(data: NewRecipe): Promise<Recipe> {

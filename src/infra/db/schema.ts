@@ -1,3 +1,4 @@
+import { relations } from 'drizzle-orm'
 import {
   pgTable,
   serial,
@@ -16,6 +17,10 @@ export const users = pgTable('users', {
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 })
 
+export const userRelations = relations(users, ({ many }) => ({
+  recipes: many(recipes),
+}))
+
 export const recipes = pgTable('recipes', {
   id: serial('id').primaryKey(),
   title: varchar('title', { length: 255 }).notNull(),
@@ -23,7 +28,14 @@ export const recipes = pgTable('recipes', {
   method: text('method').notNull(),
   authorId: integer('author_id')
     .notNull()
-    .references(() => users.id),
+    .references(() => users.id, { onDelete: 'cascade' }),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 })
+
+export const recipesRelations = relations(recipes, ({ one }) => ({
+  author: one(users, {
+    fields: [recipes.authorId],
+    references: [users.id],
+  }),
+}))

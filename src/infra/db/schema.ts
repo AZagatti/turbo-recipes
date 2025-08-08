@@ -28,7 +28,7 @@ export const recipes = pgTable('recipes', {
   method: text('method').notNull(),
   authorId: integer('author_id')
     .notNull()
-    .references(() => users.id, { onDelete: 'cascade' }),
+    .references(() => users.id, { onDelete: 'set null' }),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 })

@@ -5,4 +5,5 @@ export interface RecipesRepository {
   findById(id: number): Promise<Recipe | null>
   create(data: NewRecipe): Promise<Recipe>
   save(recipe: Recipe): Promise<void>
+  delete(recipe: Recipe): Promise<void>
 }

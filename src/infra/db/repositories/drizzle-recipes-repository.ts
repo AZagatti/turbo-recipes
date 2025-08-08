@@ -62,4 +62,8 @@ export class DrizzleRecipesRepository implements RecipesRepository {
       })
       .where(eq(recipes.id, recipe.id))
   }
+
+  async delete(recipe: Recipe): Promise<void> {
+    await db.delete(recipes).where(eq(recipes.id, recipe.id))
+  }
 }

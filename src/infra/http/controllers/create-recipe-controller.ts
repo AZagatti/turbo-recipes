@@ -22,7 +22,7 @@ export class CreateRecipeController {
       request.body,
     )
 
-    const authorId = 1
+    const authorId = Number(request.user.sub)
 
     try {
       const result = await this.createRecipeUseCase.execute({

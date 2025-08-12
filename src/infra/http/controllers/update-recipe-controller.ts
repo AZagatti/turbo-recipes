@@ -23,7 +23,7 @@ export class UpdateRecipeController {
     const { id } = updateRecipeParamsSchema.parse(request.params)
     const data = updateRecipeBodySchema.parse(request.body)
 
-    const authorId = 1
+    const authorId = Number(request.user.sub)
 
     const result = await this.updateRecipeUseCase.execute({
       recipeId: id,

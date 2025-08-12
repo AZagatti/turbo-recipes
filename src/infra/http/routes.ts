@@ -7,6 +7,7 @@ import { GetRecipeByIdController } from './controllers/get-recipe-by-id-controll
 import { ListRecipesController } from './controllers/list-recipes-controller'
 import { UpdateRecipeController } from './controllers/update-recipe-controller'
 import { DeleteRecipeController } from './controllers/delete-recipe-controller'
+import { verifyJwt } from './hooks/verify-jwt'
 
 export async function appRoutes(app: FastifyInstance) {
   const registerUserController = container.resolve(RegisterUserController)
@@ -27,19 +28,20 @@ export async function appRoutes(app: FastifyInstance) {
     authenticateUserController.handle(request, reply),
   )
 
-  app.post('/recipes', (request, reply) =>
-    createRecipeController.handle(request, reply),
-  )
   app.get('/recipes/:id', (request, reply) =>
     getRecipeByIdController.handle(request, reply),
   )
   app.get('/recipes', (request, reply) =>
     listRecipesController.handle(request, reply),
   )
-  app.patch('/recipes/:id', (request, reply) =>
+
+  app.post('/recipes', { onRequest: [verifyJwt] }, (request, reply) =>
+    createRecipeController.handle(request, reply),
+  )
+  app.patch('/recipes/:id', { onRequest: [verifyJwt] }, (request, reply) =>
     updateRecipeController.handle(request, reply),
   )
-  app.delete('/recipes/:id', (request, reply) =>
+  app.delete('/recipes/:id', { onRequest: [verifyJwt] }, (request, reply) =>
     deleteRecipeController.handle(request, reply),
   )
 }

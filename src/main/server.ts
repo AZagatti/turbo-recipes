@@ -7,6 +7,7 @@ import { appRoutes } from '@/infra/http/routes'
 import { env } from '@/config'
 import { ResourceNotFoundError } from '@/core/errors/resource-not-found-error'
 import { NotAllowedError } from '@/core/errors/not-allowed-error'
+import fastifyJwt from '@fastify/jwt'
 
 const app = fastify({
   logger:
@@ -17,6 +18,10 @@ const app = fastify({
           },
         }
       : true,
+})
+
+app.register(fastifyJwt, {
+  secret: env.JWT_SECRET,
 })
 
 app.register(appRoutes)

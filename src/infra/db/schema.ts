@@ -26,9 +26,9 @@ export const recipes = pgTable('recipes', {
   title: varchar('title', { length: 255 }).notNull(),
   ingredients: text('ingredients').notNull(),
   method: text('method').notNull(),
-  authorId: integer('author_id')
-    .notNull()
-    .references(() => users.id, { onDelete: 'set null' }),
+  authorId: integer('author_id').references(() => users.id, {
+    onDelete: 'set null',
+  }),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 })

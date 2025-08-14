@@ -1,17 +1,25 @@
-import { execSync } from 'node:child_process'
-import 'dotenv/config'
+import { execa } from 'execa'
+import { config } from 'dotenv'
+
+config({ path: '.env.test' })
 
 export async function setup() {
-  console.log('Setting up the test database...')
+  console.log('🆙 Setting up the test database...')
 
-  execSync('docker compose -f docker-compose.test.yml up -d')
+  await execa('docker', [
+    'compose',
+    '-f',
+    'docker-compose.test.yml',
+    'up',
+    '--wait',
+  ])
 
-  execSync('pnpm drizzle-kit migrate')
+  await execa('pnpm', ['drizzle-kit', 'migrate'])
 
-  console.log('Test database is ready.')
+  console.log('🚀 Test database is ready.')
 
   return async () => {
-    console.log('Tearing down the test database...')
-    execSync('docker compose -f docker-compose.test.yml down')
+    console.log('👇 Tearing down the test database...')
+    await execa('docker', ['compose', '-f', 'docker-compose.test.yml', 'down'])
   }
 }

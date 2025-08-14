@@ -13,9 +13,7 @@ describe('Update Recipe Use Case', () => {
     recipesRepository = new InMemoryRecipesRepository()
     sut = new UpdateRecipeUseCase(recipesRepository)
 
-    const newRecipe = makeRecipe({
-      authorId: 1,
-    })
+    const newRecipe = makeRecipe({ authorId: 1 })
     await recipesRepository.create(newRecipe)
   })
 

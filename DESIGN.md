@@ -15,7 +15,11 @@ This document outlines the system design for the Turbo Recipes API, a platform f
 - **FR5:** Any user must be able to list all recipes with pagination.
 - **FR6:** The user who created a recipe must be able to edit it.
 - **FR7:** The user who created a recipe must be able to delete it.
-- **FR8 [v2]:** Users must be able to search for recipes by title or ingredients.
+- **FR8:** An authenticated user must be able to retrieve their own profile information.
+- **FR9:** An authenticated user must be able to update their own profile information (name and password).
+- **FR10:** An authenticated user must be able to delete their own account.
+- **FR11 [v2]:** Users must be able to search for recipes by title or ingredients.
+
 
 ### 1.2. Non-Functional Requirements (NFRs)
 
@@ -81,8 +85,8 @@ The API will be RESTful and communicate using JSON.
     "password": "string"
   }
   ```
-- **Success Response:** `201 Created`
-- **Error Responses:** `400 Bad Request` (Invalid input), `409 Conflict` (Email already in use. *Note: For higher security systems, a generic response is often preferred to prevent user enumeration*).
+- **Success Response:** `201 Created` with the created user object (excluding password).
+- **Error Responses:** `400 Bad Request` (Invalid input), `409 Conflict` (Email already in use).
 
 #### `POST /sessions`
 - **Description:** Authenticates a user and returns a token.
@@ -94,7 +98,31 @@ The API will be RESTful and communicate using JSON.
   }
   ```
 - **Success Response:** `200 OK` with `{ "token": "jwt_token_here" }`
-- **Error Responses:** `400 Bad Request` (Invalid credentials).
+- **Error Responses:** `401 Unauthorized` (Invalid credentials).
+
+#### `GET /me`
+- **Description:** Retrieves the profile of the currently authenticated user. (Requires authentication).
+- **Success Response:** `200 OK` with the user object (excluding password hash).
+- **Error Responses:** `401 Unauthorized`.
+
+#### `PATCH /me`
+- **Description:** Updates the profile of the currently authenticated user. (Requires authentication).
+- **Request Body:**
+  ```json
+  {
+    "name": "string",
+    "oldPassword": "string",
+    "newPassword": "string"
+  }
+  ```
+  *(Note: All fields are optional. If `newPassword` is provided, `oldPassword` is required).*
+- **Success Response:** `200 OK` with the updated user object.
+- **Error Responses:** `400 Bad Request` (Invalid input), `401 Unauthorized`.
+
+#### `DELETE /me`
+- **Description:** Deletes the currently authenticated user's account. (Requires authentication).
+- **Success Response:** `204 No Content`.
+- **Error Responses:** `401 Unauthorized`.
 
 ### 3.2. Recipes
 

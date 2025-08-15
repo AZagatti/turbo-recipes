@@ -8,8 +8,10 @@ import { ListRecipesController } from './controllers/list-recipes-controller'
 import { UpdateRecipeController } from './controllers/update-recipe-controller'
 import { DeleteRecipeController } from './controllers/delete-recipe-controller'
 import { verifyJwt } from './hooks/verify-jwt'
+import { GetUserProfileController } from './controllers/get-user-profile-controller'
 
 export async function appRoutes(app: FastifyInstance) {
+  const getUserProfileController = container.resolve(GetUserProfileController)
   const registerUserController = container.resolve(RegisterUserController)
   const authenticateUserController = container.resolve(
     AuthenticateUserController,
@@ -23,9 +25,11 @@ export async function appRoutes(app: FastifyInstance) {
   app.post('/users', (request, reply) =>
     registerUserController.handle(request, reply),
   )
-
   app.post('/sessions', (request, reply) =>
     authenticateUserController.handle(request, reply),
+  )
+  app.get('/me', { onRequest: [verifyJwt] }, (request, reply) =>
+    getUserProfileController.handle(request, reply),
   )
 
   app.get('/recipes/:id', (request, reply) =>
@@ -34,7 +38,6 @@ export async function appRoutes(app: FastifyInstance) {
   app.get('/recipes', (request, reply) =>
     listRecipesController.handle(request, reply),
   )
-
   app.post('/recipes', { onRequest: [verifyJwt] }, (request, reply) =>
     createRecipeController.handle(request, reply),
   )

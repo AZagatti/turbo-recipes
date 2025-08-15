@@ -2,6 +2,7 @@ import { FastifyRequest, FastifyReply } from 'fastify'
 import { z } from 'zod'
 import { RegisterUserUseCase } from '@/core/use-cases/register-user'
 import { inject, injectable } from 'tsyringe'
+import { UserPresenter } from '../presenters/user-presenter'
 
 @injectable()
 export class RegisterUserController {
@@ -19,12 +20,14 @@ export class RegisterUserController {
 
     const { name, email, password } = registerBodySchema.parse(request.body)
 
-    await this.registerUserUseCase.execute({
+    const result = await this.registerUserUseCase.execute({
       name,
       email,
       password,
     })
 
-    return reply.status(201).send()
+    const user = UserPresenter.toHTTP(result.user)
+
+    return reply.status(201).send({ user })
   }
 }

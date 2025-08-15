@@ -39,7 +39,7 @@ describe('Get Recipe By Id Use Case', () => {
   it('throws an error if recipe is not found', async () => {
     await expect(
       sut.execute({
-        recipeId: 99, // ID que não existe
+        recipeId: 99,
       }),
     ).rejects.toBeInstanceOf(ResourceNotFoundError)
   })

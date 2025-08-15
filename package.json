@@ -6,8 +6,11 @@
   "scripts": {
     "dev": "tsx watch src/main/server.ts",
     "test": "vitest",
-    "test:unit": "vitest run '**/*.spec.ts'",
-    "test:integration": "vitest run '**/*.test.ts'"
+    "test:unit": "vitest run --config ./vitest.config.unit.ts",
+    "test:unit:watch": "vitest --config ./vitest.config.unit.ts",
+    "test:integration": "TEST_ENV=integration vitest run --config ./vitest.config.integration.ts",
+    "test:integration:watch": "TEST_ENV=integration vitest --config ./vitest.config.integration.ts",
+    "test:ci": "vitest run"
   },
   "keywords": [],
   "author": "",

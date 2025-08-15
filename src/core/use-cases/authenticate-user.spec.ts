@@ -4,12 +4,8 @@ import { TokenGenerator } from '../contracts/token-generator'
 import { InvalidCredentialsError } from '../errors/invalid-credentials-error'
 import { InMemoryUsersRepository } from './_test/in-memory-users-repository'
 import { AuthenticateUserUseCase } from './authenticate-user'
-
-class FakeHashComparer implements HashComparer {
-  async compare(plain: string, hash: string): Promise<boolean> {
-    return `${plain}-hashed` === hash
-  }
-}
+import { FakeHasher } from './_test/fake-hasher'
+import { makeUser } from './_test/users-factory'
 
 class FakeTokenGenerator implements TokenGenerator {
   async generate(payload: { sub: string }): Promise<string> {
@@ -25,7 +21,7 @@ let sut: AuthenticateUserUseCase
 describe('Authenticate User Use Case', () => {
   beforeEach(() => {
     usersRepository = new InMemoryUsersRepository()
-    hashComparer = new FakeHashComparer()
+    hashComparer = new FakeHasher()
     tokenGenerator = new FakeTokenGenerator()
     sut = new AuthenticateUserUseCase(
       usersRepository,
@@ -33,14 +29,12 @@ describe('Authenticate User Use Case', () => {
       tokenGenerator,
     )
 
-    usersRepository.items.push({
+    const user = makeUser({
       id: 1,
-      name: 'John Doe',
       email: 'john.doe@email.com',
       passwordHash: 'password123-hashed',
-      createdAt: new Date(),
-      updatedAt: new Date(),
     })
+    usersRepository.items.push(user)
   })
 
   it('authenticates a user with valid credentials', async () => {

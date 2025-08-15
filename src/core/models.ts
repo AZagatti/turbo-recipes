@@ -5,6 +5,6 @@ export type User = InferSelectModel<typeof users>
 export type NewUser = InferInsertModel<typeof users>
 
 export type Recipe = InferSelectModel<typeof recipes> & {
-  author?: Pick<User, 'id' | 'name'>
+  author?: Pick<User, 'id' | 'name'> | null
 }
 export type NewRecipe = InferInsertModel<typeof recipes>

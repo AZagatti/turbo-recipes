@@ -21,4 +21,15 @@ export class DrizzleUsersRepository implements UsersRepository {
     const result = await db.insert(users).values(data).returning()
     return result[0]
   }
+
+  async save(user: User): Promise<void> {
+    await db
+      .update(users)
+      .set({
+        name: user.name,
+        passwordHash: user.passwordHash,
+        updatedAt: new Date(),
+      })
+      .where(eq(users.id, user.id))
+  }
 }

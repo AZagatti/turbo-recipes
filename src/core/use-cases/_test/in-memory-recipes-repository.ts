@@ -20,7 +20,7 @@ export class InMemoryRecipesRepository implements RecipesRepository {
       title: data.title,
       ingredients: data.ingredients,
       method: data.method,
-      authorId: data.authorId,
+      authorId: data.authorId ?? null,
       createdAt: new Date(),
       updatedAt: new Date(),
     }

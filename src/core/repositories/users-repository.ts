@@ -1,4 +1,4 @@
-import { User } from '../entities/user'
+import { User } from '@/core/entities/user'
 import { NewUser } from '../models'
 
 export interface UsersRepository {

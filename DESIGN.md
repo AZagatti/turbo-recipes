@@ -44,16 +44,11 @@ For our initial version (MVP), the architecture is a simple monolith containing 
 
 ```mermaid
 graph TD
-    subgraph "API Monolith"
-        User -- HTTPS --> API[API Server <br> (Fastify)];
-        API -- "Writes Job" --> Queue[(Message Queue <br> Redis / BullMQ)];
-        API -- "Reads/Writes" --> DB[(Database <br> PostgreSQL)];
-    end
-
-    subgraph "Worker Process"
-        Worker[Email Worker] -- "Reads Job" --> Queue;
-        Worker -- "Sends Email" --> Mailer[External Mail Service];
-    end
+    User -- HTTPS --> API["API Server (Fastify)"];
+    API -- "Reads/Writes" --> DB[("Database (PostgreSQL)")];
+    API -- "Writes Job" --> Queue[("Message Queue (Redis / BullMQ)")];
+    Worker["Email Worker"] -- "Reads Job" --> Queue;
+    Worker -- "Sends Email" --> Mailer["External Mail Service"];
 ```
 
 ### 2.2. Data Model / Entities

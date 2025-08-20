@@ -19,6 +19,8 @@ This document outlines the system design for the Turbo Recipes API, a platform f
 - **FR9:** An authenticated user must be able to update their own profile information (name and password).
 - **FR10:** An authenticated user must be able to delete their own account.
 - **FR11 [v2]:** Users must be able to search for recipes by title or ingredients.
+- **FR12:** A user must be able to request a password reset for their email.
+- **FR13:** A user must be able to reset their password using a token sent to their email.
 
 
 ### 1.2. Non-Functional Requirements (NFRs)
@@ -42,8 +44,16 @@ For our initial version (MVP), the architecture is a simple monolith containing 
 
 ```mermaid
 graph TD
-    A[User] -- HTTPS --> B["API Server <br> (Fastify)"];
-    B -- TCP/IP --> C[("Database <br> PostgreSQL")];
+    subgraph "API Monolith"
+        User -- HTTPS --> API[API Server <br> (Fastify)];
+        API -- "Writes Job" --> Queue[(Message Queue <br> Redis / BullMQ)];
+        API -- "Reads/Writes" --> DB[(Database <br> PostgreSQL)];
+    end
+
+    subgraph "Worker Process"
+        Worker[Email Worker] -- "Reads Job" --> Queue;
+        Worker -- "Sends Email" --> Mailer[External Mail Service];
+    end
 ```
 
 ### 2.2. Data Model / Entities
@@ -124,7 +134,32 @@ The API will be RESTful and communicate using JSON.
 - **Success Response:** `204 No Content`.
 - **Error Responses:** `401 Unauthorized`.
 
-### 3.2. Recipes
+### 3.2. Password
+
+#### `POST /password/forgot`
+- **Description:** Requests a password reset for a given email. The server will send an email with a reset link if the user exists. Always returns a success response to prevent email enumeration.
+- **Request Body:**
+  ```json
+  {
+    "email": "string"
+  }
+  ```
+- **Success Response:** `204 No Content`.
+- **Error Responses:** `400 Bad Request`.
+
+#### `POST /password/reset`
+- **Description:** Resets the password using a token from the "forgot password" email.
+- **Request Body:**
+  ```json
+  {
+    "token": "string",
+    "password": "string"
+  }
+  ```
+- **Success Response:** `204 No Content`.
+- **Error Responses:** `400 Bad Request` (Invalid token or weak password).
+
+### 3.3. Recipes
 
 #### `POST /recipes`
 - **Description:** Creates a new recipe. (Requires authentication).

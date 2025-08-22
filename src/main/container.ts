@@ -13,6 +13,10 @@ import { RecipesRepository } from '@/core/repositories/recipes-repository'
 import { DrizzleRecipesRepository } from '@/infra/db/repositories/drizzle-recipes-repository'
 import { PasswordResetTokensRepository } from '@/core/repositories/password-reset-tokens-repository'
 import { DrizzlePasswordResetTokensRepository } from '@/infra/db/repositories/drizzle-password-reset-tokens-repository'
+import { env } from './config'
+import { MailProvider } from '@/core/contracts/mail-provider'
+import { ResendMailProvider } from '@/infra/mail/resend-mail-provider'
+import { LogMailProvider } from '@/infra/mail/log-mail-provider'
 
 container.registerSingleton<UsersRepository>(
   'UsersRepository',
@@ -35,3 +39,9 @@ container.registerSingleton<TokenGenerator>(
   'TokenGenerator',
   JoseTokenGenerator,
 )
+
+if (env.NODE_ENV !== 'production') {
+  container.registerSingleton<MailProvider>('MailProvider', ResendMailProvider)
+} else {
+  container.registerSingleton<MailProvider>('MailProvider', LogMailProvider)
+}

@@ -11,6 +11,8 @@ import { TokenGenerator } from '@/core/contracts/token-generator'
 import { JoseTokenGenerator } from '@/infra/cryptography/jose-token-generator'
 import { RecipesRepository } from '@/core/repositories/recipes-repository'
 import { DrizzleRecipesRepository } from '@/infra/db/repositories/drizzle-recipes-repository'
+import { PasswordResetTokensRepository } from '@/core/repositories/password-reset-tokens-repository'
+import { DrizzlePasswordResetTokensRepository } from '@/infra/db/repositories/drizzle-password-reset-tokens-repository'
 
 container.registerSingleton<UsersRepository>(
   'UsersRepository',
@@ -19,6 +21,11 @@ container.registerSingleton<UsersRepository>(
 container.registerSingleton<RecipesRepository>(
   'RecipesRepository',
   DrizzleRecipesRepository,
+)
+
+container.registerSingleton<PasswordResetTokensRepository>(
+  'PasswordResetTokensRepository',
+  DrizzlePasswordResetTokensRepository,
 )
 
 const hasher = new BcryptHasher()

@@ -4,6 +4,7 @@ import { injectable, inject } from 'tsyringe'
 import { Usecase } from '../usecase'
 import { ResourceNotFoundError } from '@/core/errors/resource-not-found-error'
 import { randomUUID } from 'node:crypto'
+import { MailProvider } from '@/core/contracts/mail-provider'
 
 interface ForgotPasswordRequest {
   email: string
@@ -20,6 +21,8 @@ export class ForgotPasswordUseCase
     private usersRepository: UsersRepository,
     @inject('PasswordResetTokensRepository')
     private passwordResetTokensRepository: PasswordResetTokensRepository,
+    @inject('MailProvider')
+    private mailProvider: MailProvider,
   ) {}
 
   async execute({
@@ -40,6 +43,15 @@ export class ForgotPasswordUseCase
       token,
       userId: user.id,
       expiresAt,
+    })
+
+    await this.mailProvider.sendMail({
+      to: user.email,
+      subject: 'Recuperação de Senha',
+      template: {
+        name: 'forgot-password',
+        payload: { token },
+      },
     })
   }
 }

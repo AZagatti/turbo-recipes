@@ -1,7 +1,10 @@
-interface SendMailParams {
+export interface SendMailParams {
   to: string
   subject: string
-  body: string
+  template: {
+    name: 'forgot-password'
+    payload: Record<string, unknown>
+  }
 }
 
 export interface MailProvider {

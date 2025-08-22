@@ -39,3 +39,14 @@ export const recipesRelations = relations(recipes, ({ one }) => ({
     references: [users.id],
   }),
 }))
+
+export const passwordResetTokens = pgTable('password_reset_tokens', {
+  id: serial('id').primaryKey(),
+  token: varchar('token', { length: 255 }).notNull().unique(),
+  userId: integer('user_id')
+    .notNull()
+    .references(() => users.id, {
+      onDelete: 'cascade',
+    }),
+  expiresAt: timestamp('expires_at').notNull(),
+})

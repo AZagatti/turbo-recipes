@@ -4,22 +4,22 @@ import { makeUser } from '../_test/users-factory'
 import { InMemoryPasswordResetTokensRepository } from '../_test/in-memory-password-reset-tokens-repository'
 import { ForgotPasswordUseCase } from './forgot-password'
 import { ResourceNotFoundError } from '@/core/errors/resource-not-found-error'
-import { FakeMailProvider } from '../_test/fake-mail-provider'
+import { FakeQueueProvider } from '../_test/fake-queue-provider'
 
 let usersRepository: InMemoryUsersRepository
 let passwordResetTokensRepository: InMemoryPasswordResetTokensRepository
-let mailProvider: FakeMailProvider
+let queueProvider: FakeQueueProvider
 let sut: ForgotPasswordUseCase
 
 describe('Forgot Password Use Case', () => {
   beforeEach(() => {
     usersRepository = new InMemoryUsersRepository()
     passwordResetTokensRepository = new InMemoryPasswordResetTokensRepository()
-    mailProvider = new FakeMailProvider()
+    queueProvider = new FakeQueueProvider()
     sut = new ForgotPasswordUseCase(
       usersRepository,
       passwordResetTokensRepository,
-      mailProvider,
+      queueProvider,
     )
   })
 
@@ -44,8 +44,8 @@ describe('Forgot Password Use Case', () => {
     ).rejects.toBeInstanceOf(ResourceNotFoundError)
   })
 
-  it('sends a password reset link', async () => {
-    const sendMailSpy = vi.spyOn(mailProvider, 'sendMail')
+  it('adds a job to the queue to send a password reset link', async () => {
+    const addJobSpy = vi.spyOn(queueProvider, 'add')
 
     await usersRepository.create(makeUser({ email: 'john.doe@email.com' }))
 
@@ -55,12 +55,15 @@ describe('Forgot Password Use Case', () => {
 
     const tokenInDb = passwordResetTokensRepository.items[0]
 
-    expect(sendMailSpy).toHaveBeenCalledWith({
-      to: 'john.doe@email.com',
-      subject: 'Recuperação de Senha',
-      template: {
-        name: 'forgot-password',
-        payload: { token: tokenInDb.token },
+    expect(addJobSpy).toHaveBeenCalledWith({
+      name: 'send-forgot-password-mail',
+      payload: {
+        to: 'john.doe@email.com',
+        subject: 'Recuperação de Senha',
+        template: {
+          name: 'forgot-password',
+          payload: { token: tokenInDb.token },
+        },
       },
     })
   })

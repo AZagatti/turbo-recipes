@@ -17,6 +17,8 @@ import { env } from './config'
 import { MailProvider } from '@/core/contracts/mail-provider'
 import { ResendMailProvider } from '@/infra/mail/resend-mail-provider'
 import { LogMailProvider } from '@/infra/mail/log-mail-provider'
+import { QueueProvider } from '@/core/contracts/queue-provider'
+import { BullmqQueueProvider } from '@/infra/queue/bullmq-queue-provider'
 
 container.registerSingleton<UsersRepository>(
   'UsersRepository',
@@ -40,7 +42,9 @@ container.registerSingleton<TokenGenerator>(
   JoseTokenGenerator,
 )
 
-if (env.NODE_ENV !== 'production') {
+container.registerSingleton<QueueProvider>('QueueProvider', BullmqQueueProvider)
+
+if (env.NODE_ENV === 'production') {
   container.registerSingleton<MailProvider>('MailProvider', ResendMailProvider)
 } else {
   container.registerSingleton<MailProvider>('MailProvider', LogMailProvider)

@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "tsx watch src/main/server.ts",
+    "worker": "tsx watch src/main/worker.ts",
     "test": "vitest",
     "test:unit": "TEST_ENV=unit vitest run",
     "test:unit:watch": "TEST_ENV=unit vitest",

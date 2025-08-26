@@ -10,6 +10,7 @@ const envSchema = z.object({
   PORT: z.coerce.number().default(3333),
   RESEND_API_KEY: z.string(),
   MAIL_FROM: z.email(),
+  REDIS_URL: z.url(),
 })
 
 const _env = envSchema.safeParse(process.env)

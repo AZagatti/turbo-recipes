@@ -6,4 +6,9 @@ export interface RecipesRepository {
   create(data: NewRecipe): Promise<Recipe>
   save(recipe: Recipe): Promise<void>
   delete(recipe: Recipe): Promise<void>
+  searchMany(params: {
+    query: string
+    page: number
+    limit: number
+  }): Promise<Recipe[]>
 }

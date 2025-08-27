@@ -45,4 +45,24 @@ export class InMemoryRecipesRepository implements RecipesRepository {
       this.items.splice(itemIndex, 1)
     }
   }
+
+  async searchMany({
+    query,
+    page,
+    limit,
+  }: {
+    query: string
+    page: number
+    limit: number
+  }) {
+    const lowerCaseQuery = query.toLowerCase()
+
+    const filteredRecipes = this.items.filter(
+      (item) =>
+        item.title.toLowerCase().includes(lowerCaseQuery) ||
+        item.ingredients.toLowerCase().includes(lowerCaseQuery),
+    )
+
+    return filteredRecipes.slice((page - 1) * limit, page * limit)
+  }
 }

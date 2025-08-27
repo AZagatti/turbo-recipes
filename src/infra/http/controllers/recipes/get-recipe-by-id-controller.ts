@@ -2,6 +2,7 @@ import { FastifyRequest, FastifyReply } from 'fastify'
 import { z } from 'zod'
 import { inject, injectable } from 'tsyringe'
 import { GetRecipeByIdUseCase } from '@/core/use-cases/recipes/get-recipe-by-id'
+import { RecipePresenter } from '../../presenters/recipe-presenter'
 
 @injectable()
 export class GetRecipeByIdController {
@@ -17,10 +18,12 @@ export class GetRecipeByIdController {
 
     const { id } = getRecipeParamsSchema.parse(request.params)
 
-    const result = await this.getRecipeByIdUseCase.execute({
+    const { recipe } = await this.getRecipeByIdUseCase.execute({
       recipeId: id,
     })
 
-    return reply.status(200).send(result)
+    return reply.status(200).send({
+      recipe: RecipePresenter.toHTTP(recipe),
+    })
   }
 }

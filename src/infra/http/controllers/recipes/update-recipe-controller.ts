@@ -2,6 +2,7 @@ import { FastifyRequest, FastifyReply } from 'fastify'
 import { z } from 'zod'
 import { inject, injectable } from 'tsyringe'
 import { UpdateRecipeUseCase } from '@/core/use-cases/recipes/update-recipe'
+import { RecipePresenter } from '../../presenters/recipe-presenter'
 
 @injectable()
 export class UpdateRecipeController {
@@ -25,12 +26,14 @@ export class UpdateRecipeController {
 
     const authorId = Number(request.user.sub)
 
-    const result = await this.updateRecipeUseCase.execute({
+    const { recipe } = await this.updateRecipeUseCase.execute({
       recipeId: id,
       authorId,
       data,
     })
 
-    return reply.status(200).send(result)
+    return reply.status(200).send({
+      recipe: RecipePresenter.toHTTP(recipe),
+    })
   }
 }

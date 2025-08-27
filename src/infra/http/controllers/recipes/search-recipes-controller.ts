@@ -1,25 +1,30 @@
 import { FastifyRequest, FastifyReply } from 'fastify'
 import { z } from 'zod'
 import { inject, injectable } from 'tsyringe'
-import { ListRecipesUseCase } from '@/core/use-cases/recipes/list-recipes'
+import { SearchRecipesUseCase } from '@/core/use-cases/recipes/search-recipes'
 import { RecipePresenter } from '../../presenters/recipe-presenter'
 
 @injectable()
-export class ListRecipesController {
+export class SearchRecipesController {
   constructor(
-    @inject(ListRecipesUseCase)
-    private listRecipesUseCase: ListRecipesUseCase,
+    @inject(SearchRecipesUseCase)
+    private searchRecipesUseCase: SearchRecipesUseCase,
   ) {}
 
   async handle(request: FastifyRequest, reply: FastifyReply) {
-    const listRecipesQuerySchema = z.object({
+    const searchQuerySchema = z.object({
+      q: z.string(),
       page: z.coerce.number().int().min(1).default(1),
       limit: z.coerce.number().int().min(1).max(50).default(20),
     })
 
-    const { page, limit } = listRecipesQuerySchema.parse(request.query)
+    const { q, page, limit } = searchQuerySchema.parse(request.query)
 
-    const { recipes } = await this.listRecipesUseCase.execute({ page, limit })
+    const { recipes } = await this.searchRecipesUseCase.execute({
+      query: q,
+      page,
+      limit,
+    })
 
     return reply.status(200).send({
       recipes: recipes.map(RecipePresenter.toHTTP),

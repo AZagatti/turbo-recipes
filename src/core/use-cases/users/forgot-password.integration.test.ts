@@ -2,26 +2,26 @@ import { db } from '@/infra/db'
 import { DrizzlePasswordResetTokensRepository } from '@/infra/db/repositories/drizzle-password-reset-tokens-repository'
 import { DrizzleUsersRepository } from '@/infra/db/repositories/drizzle-users-repository'
 import { passwordResetTokens, users } from '@/infra/db/schema'
-import { LogMailProvider } from '@/infra/mail/log-mail-provider'
 import { eq } from 'drizzle-orm'
 import { beforeAll, beforeEach, describe, expect, it } from 'vitest'
 import { makeNewUser } from '../_test/users-factory'
 import { ForgotPasswordUseCase } from './forgot-password'
+import { FakeQueueProvider } from '../_test/fake-queue-provider'
 
 let usersRepository: DrizzleUsersRepository
 let passwordResetTokensRepository: DrizzlePasswordResetTokensRepository
-let mailProvider: LogMailProvider
+let queueProvider: FakeQueueProvider
 let sut: ForgotPasswordUseCase
 
 describe('Forgot Password Use Case (Integration)', () => {
   beforeAll(() => {
     usersRepository = new DrizzleUsersRepository()
     passwordResetTokensRepository = new DrizzlePasswordResetTokensRepository()
-    mailProvider = new LogMailProvider()
+    queueProvider = new FakeQueueProvider()
     sut = new ForgotPasswordUseCase(
       usersRepository,
       passwordResetTokensRepository,
-      mailProvider,
+      queueProvider,
     )
   })
 

@@ -4,7 +4,10 @@ import { InferSelectModel, InferInsertModel } from 'drizzle-orm'
 export type User = InferSelectModel<typeof users>
 export type NewUser = InferInsertModel<typeof users>
 
-export type Recipe = InferSelectModel<typeof recipes> & {
+export type Recipe = Omit<
+  InferSelectModel<typeof recipes>,
+  'searchableText'
+> & {
   author?: Pick<User, 'id' | 'name'> | null
 }
 export type NewRecipe = InferInsertModel<typeof recipes>

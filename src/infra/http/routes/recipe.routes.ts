@@ -6,6 +6,7 @@ import { ListRecipesController } from '../controllers/recipes/list-recipes-contr
 import { UpdateRecipeController } from '../controllers/recipes/update-recipe-controller'
 import { DeleteRecipeController } from '../controllers/recipes/delete-recipe-controller'
 import { verifyJwt } from '../hooks/verify-jwt'
+import { SearchRecipesController } from '../controllers/recipes/search-recipes-controller'
 
 export async function recipeRoutes(app: FastifyInstance) {
   const createRecipeController = container.resolve(CreateRecipeController)
@@ -13,6 +14,11 @@ export async function recipeRoutes(app: FastifyInstance) {
   const listRecipesController = container.resolve(ListRecipesController)
   const updateRecipeController = container.resolve(UpdateRecipeController)
   const deleteRecipeController = container.resolve(DeleteRecipeController)
+  const searchRecipesController = container.resolve(SearchRecipesController)
+
+  app.get('/recipes/search', (request, reply) =>
+    searchRecipesController.handle(request, reply),
+  )
 
   app.get('/recipes', (request, reply) =>
     listRecipesController.handle(request, reply),

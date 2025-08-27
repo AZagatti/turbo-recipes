@@ -29,6 +29,13 @@
       "when": 1755821222376,
       "tag": "0003_even_vulture",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1756258282218,
+      "tag": "0004_goofy_radioactive_man",
+      "breakpoints": true
     }
   ]
 }

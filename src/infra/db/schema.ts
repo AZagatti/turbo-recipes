@@ -1,4 +1,4 @@
-import { relations } from 'drizzle-orm'
+import { relations, SQL, sql } from 'drizzle-orm'
 import {
   pgTable,
   serial,
@@ -6,7 +6,15 @@ import {
   text,
   timestamp,
   integer,
+  index,
+  customType,
 } from 'drizzle-orm/pg-core'
+
+export const tsvector = customType<{ data: string }>({
+  dataType() {
+    return 'tsvector'
+  },
+})
 
 export const users = pgTable('users', {
   id: serial('id').primaryKey(),
@@ -21,17 +29,26 @@ export const userRelations = relations(users, ({ many }) => ({
   recipes: many(recipes),
 }))
 
-export const recipes = pgTable('recipes', {
-  id: serial('id').primaryKey(),
-  title: varchar('title', { length: 255 }).notNull(),
-  ingredients: text('ingredients').notNull(),
-  method: text('method').notNull(),
-  authorId: integer('author_id').references(() => users.id, {
-    onDelete: 'set null',
-  }),
-  createdAt: timestamp('created_at').defaultNow().notNull(),
-  updatedAt: timestamp('updated_at').defaultNow().notNull(),
-})
+export const recipes = pgTable(
+  'recipes',
+  {
+    id: serial('id').primaryKey(),
+    title: varchar('title', { length: 255 }).notNull(),
+    ingredients: text('ingredients').notNull(),
+    method: text('method').notNull(),
+    authorId: integer('author_id').references(() => users.id, {
+      onDelete: 'set null',
+    }),
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+    updatedAt: timestamp('updated_at').defaultNow().notNull(),
+    searchableText: tsvector('searchable_text').generatedAlwaysAs(
+      (): SQL =>
+        sql`setweight(to_tsvector('portuguese', ${recipes.title}), 'A') ||
+          setweight(to_tsvector('portuguese', ${recipes.ingredients}), 'B')`,
+    ),
+  },
+  (table) => [index('searchable_text_idx').using('gin', table.searchableText)],
+)
 
 export const recipesRelations = relations(recipes, ({ one }) => ({
   author: one(users, {

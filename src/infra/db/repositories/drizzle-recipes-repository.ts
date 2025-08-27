@@ -3,7 +3,7 @@ import { NewRecipe, Recipe } from '@/core/models'
 import { db } from '..'
 import { recipes } from '../schema'
 import { injectable } from 'tsyringe'
-import { eq } from 'drizzle-orm'
+import { desc, eq, sql } from 'drizzle-orm'
 
 @injectable()
 export class DrizzleRecipesRepository implements RecipesRepository {
@@ -65,5 +65,29 @@ export class DrizzleRecipesRepository implements RecipesRepository {
 
   async delete(recipe: Recipe): Promise<void> {
     await db.delete(recipes).where(eq(recipes.id, recipe.id))
+  }
+
+  async searchMany({
+    query,
+    page,
+    limit,
+  }: {
+    query: string
+    page: number
+    limit: number
+  }): Promise<Recipe[]> {
+    const formattedQuery = query.trim().split(/\s+/).join(' & ')
+
+    const searchQuery = sql`to_tsquery('portuguese', ${formattedQuery})`
+
+    const foundRecipes = await db
+      .select()
+      .from(recipes)
+      .where(sql`${recipes.searchableText} @@ ${searchQuery}`)
+      .orderBy(desc(sql`ts_rank(${recipes.searchableText}, ${searchQuery})`))
+      .limit(limit)
+      .offset((page - 1) * limit)
+
+    return foundRecipes
   }
 }

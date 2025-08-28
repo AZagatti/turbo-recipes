@@ -9,9 +9,11 @@
     "test": "vitest",
     "test:unit": "TEST_ENV=unit vitest run",
     "test:unit:watch": "TEST_ENV=unit vitest",
+    "test:unit:related": "TEST_ENV=unit vitest related --run",
     "test:integration": "TEST_ENV=integration vitest run",
     "test:integration:watch": "TEST_ENV=integration vitest",
-    "test:ci": "vitest run"
+    "test:ci": "vitest run",
+    "prepare": "husky"
   },
   "keywords": [],
   "author": "",
@@ -44,6 +46,8 @@
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.3",
     "execa": "^9.6.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.1.5",
     "pino-pretty": "^13.1.1",
     "postcss": "^8.5.6",
     "prettier": "^3.6.2",
@@ -53,5 +57,12 @@
     "typescript-eslint": "^8.38.0",
     "vite-tsconfig-paths": "^5.1.4",
     "vitest": "^3.2.4"
+  },
+  "lint-staged": {
+    "*.ts": [
+      "pnpm eslint --fix",
+      "pnpm prettier --write",
+      "pnpm test:unit:related"
+    ]
   }
 }

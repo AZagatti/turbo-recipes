@@ -32,4 +32,10 @@ jobs:
         run: pnpm tsc --noEmit
 
       - name: Run tests
+        env:
+          DATABASE_URL: 'postgresql://docker:docker@localhost:5433/turbo_recipes_test'
+          JWT_SECRET: 'random'
+          REDIS_URL: 'redis://localhost:6379'
+          RESEND_API_KEY: 'fake-key'
+          MAIL_FROM: 'test@example.com'
         run: pnpm test:ci

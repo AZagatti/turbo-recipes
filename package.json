@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "start": "node dist/main/server.js",
     "dev": "tsx watch src/main/server.ts",
     "worker": "tsx watch src/main/worker.ts",
     "test": "vitest",

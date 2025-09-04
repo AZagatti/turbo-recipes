@@ -20,9 +20,6 @@ importers:
       bullmq:
         specifier: ^5.58.1
         version: 5.58.1
-      drizzle-kit:
-        specifier: ^0.31.4
-        version: 0.31.4
       drizzle-orm:
         specifier: ^0.44.3
         version: 0.44.3(postgres@3.4.7)
@@ -69,6 +66,9 @@ importers:
       dotenv:
         specifier: ^17.2.1
         version: 17.2.1
+      drizzle-kit:
+        specifier: ^0.31.4
+        version: 0.31.4
       eslint:
         specifier: ^9.31.0
         version: 9.31.0(jiti@2.5.1)

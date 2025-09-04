@@ -1,37 +1,17 @@
-FROM node:22-slim AS deps
-WORKDIR /app
-
-RUN npm install -g pnpm@10
-
-COPY package.json pnpm-lock.yaml ./
-
-RUN pnpm install --prod --frozen-lockfile --ignore-scripts
-
-FROM node:22-slim AS builder
-WORKDIR /app
-
-RUN npm install -g pnpm@10
-
-COPY --from=deps /app/node_modules ./node_modules
-COPY package.json pnpm-lock.yaml ./
-
-COPY . .
-
-RUN pnpm install --frozen-lockfile --ignore-scripts
-RUN pnpm build
-
-FROM node:22-slim AS runner
+FROM node:22-slim
 WORKDIR /app
 
 ENV NODE_ENV=production
-
 RUN npm install -g pnpm@10
 
-COPY --from=deps /app/node_modules ./node_modules
-COPY package.json ./
+COPY package.json pnpm-lock.yaml ./
 
-COPY --from=builder /app/dist ./dist
+RUN pnpm install --frozen-lockfile --ignore-scripts
+
+COPY . .
+
+RUN pnpm build
 
 EXPOSE 3333
 
-CMD ["pnpm", "start:prod"]
+CMD ["sh", "-c", "pnpm exec drizzle-kit migrate && pnpm start:prod"]

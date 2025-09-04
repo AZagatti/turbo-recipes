@@ -28,7 +28,8 @@
       ]
     },
     "experimentalDecorators": true,
-    "emitDecoratorMetadata": true
+    "emitDecoratorMetadata": true,
+    "rewriteRelativeImportExtensions": true
   },
   "include": [
     "src"

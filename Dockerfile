@@ -18,7 +18,7 @@ COPY package.json pnpm-lock.yaml ./
 COPY . .
 
 RUN pnpm install --frozen-lockfile --ignore-scripts
-RUN pnpm tsc
+RUN pnpm build
 
 FROM node:22-slim AS runner
 WORKDIR /app

@@ -34,4 +34,4 @@ COPY --from=builder /app/dist ./dist
 
 EXPOSE 3333
 
-CMD ["pnpm", "start"]
+CMD ["pnpm", "start:prod"]

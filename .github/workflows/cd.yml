@@ -35,3 +35,13 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+
+  deploy:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy API
+        run: curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK_API }}
+
+      - name: Deploy Worker
+        run: curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK_WORKER }}F

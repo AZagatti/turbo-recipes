@@ -6,10 +6,10 @@
   "type": "module",
   "scripts": {
     "build": "tsdown",
+    "start": "node dist/server.js",
     "start:dev": "tsx watch src/main/server.ts",
-    "start:prod": "node dist/server.js",
+    "worker": "node dist/worker.js",
     "worker:dev": "tsx watch src/main/worker.ts",
-    "worker:prod": "node dist/worker.js",
     "lint": "eslint .",
     "test": "vitest",
     "test:unit": "TEST_ENV=unit vitest run",

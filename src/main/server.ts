@@ -53,3 +53,7 @@ app.setErrorHandler((error, request, reply) => {
 app.listen({ port: 3333 }).then(() => {
   console.log('🚀 Server listening on port 3333')
 })
+
+if (env.RUN_WORKER_IN_API) {
+  import('./worker.js')
+}

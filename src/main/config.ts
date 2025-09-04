@@ -8,6 +8,7 @@ const envSchema = z.object({
   DATABASE_URL: z.url(),
   JWT_SECRET: z.string(),
   PORT: z.coerce.number().default(3333),
+  HOST: z.string().default('0.0.0.0'),
   RESEND_API_KEY: z.string(),
   MAIL_FROM: z.email(),
   REDIS_URL: z.url(),

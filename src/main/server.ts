@@ -8,6 +8,8 @@ import { env } from '@/config'
 import { ResourceNotFoundError } from '@/core/errors/resource-not-found-error'
 import { NotAllowedError } from '@/core/errors/not-allowed-error'
 import fastifyJwt from '@fastify/jwt'
+import swagger from '@fastify/swagger'
+import scalar from '@scalar/fastify-api-reference'
 
 const app = fastify({
   logger:
@@ -18,6 +20,23 @@ const app = fastify({
           },
         }
       : true,
+})
+
+app.register(swagger, {
+  openapi: {
+    info: {
+      title: 'Turbo Recipes API',
+      description: 'API for recipe application',
+      version: '1.0.0',
+    },
+  },
+})
+
+app.register(scalar, {
+  routePrefix: '/docs',
+  configuration: {
+    theme: 'fastify',
+  },
 })
 
 app.register(fastifyJwt, {

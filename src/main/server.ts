@@ -10,6 +10,11 @@ import { NotAllowedError } from '@/core/errors/not-allowed-error'
 import fastifyJwt from '@fastify/jwt'
 import swagger from '@fastify/swagger'
 import scalar from '@scalar/fastify-api-reference'
+import {
+  serializerCompiler,
+  validatorCompiler,
+  ZodTypeProvider,
+} from 'fastify-type-provider-zod'
 
 const app = fastify({
   logger:
@@ -20,7 +25,10 @@ const app = fastify({
           },
         }
       : true,
-})
+}).withTypeProvider<ZodTypeProvider>()
+
+app.setValidatorCompiler(validatorCompiler)
+app.setSerializerCompiler(serializerCompiler)
 
 app.register(swagger, {
   openapi: {
@@ -43,7 +51,9 @@ app.register(fastifyJwt, {
   secret: env.JWT_SECRET,
 })
 
-app.register(appRoutes)
+app.after(() => {
+  app.register(appRoutes)
+})
 
 app.setErrorHandler((error, request, reply) => {
   if (error instanceof ZodError) {

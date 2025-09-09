@@ -1,8 +1,8 @@
 import { FastifyRequest, FastifyReply } from 'fastify'
-import { z } from 'zod'
 import { RegisterUserUseCase } from '@/core/use-cases/users/register-user'
 import { inject, injectable } from 'tsyringe'
 import { UserPresenter } from '@/infra/http/presenters/user-presenter'
+import { CreateUserBody } from '../../schemas/user-schemas'
 
 @injectable()
 export class RegisterUserController {
@@ -11,14 +11,11 @@ export class RegisterUserController {
     private registerUserUseCase: RegisterUserUseCase,
   ) {}
 
-  async handle(request: FastifyRequest, reply: FastifyReply) {
-    const registerBodySchema = z.object({
-      name: z.string(),
-      email: z.email(),
-      password: z.string().min(6),
-    })
-
-    const { name, email, password } = registerBodySchema.parse(request.body)
+  async handle(
+    request: FastifyRequest<{ Body: CreateUserBody }>,
+    reply: FastifyReply,
+  ) {
+    const { name, email, password } = request.body
 
     const result = await this.registerUserUseCase.execute({
       name,

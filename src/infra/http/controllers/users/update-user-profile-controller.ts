@@ -1,9 +1,9 @@
 import { FastifyRequest, FastifyReply } from 'fastify'
-import { z } from 'zod'
 import { inject, injectable } from 'tsyringe'
 import { UpdateUserProfileUseCase } from '@/core/use-cases/users/update-user-profile'
 import { UserPresenter } from '@/infra/http/presenters/user-presenter'
 import { InvalidCredentialsError } from '@/core/errors/invalid-credentials-error'
+import { UpdateUserProfileBody } from '../../schemas/user-schemas'
 
 @injectable()
 export class UpdateUserProfileController {
@@ -12,14 +12,11 @@ export class UpdateUserProfileController {
     private updateUserProfileUseCase: UpdateUserProfileUseCase,
   ) {}
 
-  async handle(request: FastifyRequest, reply: FastifyReply) {
-    const updateUserBodySchema = z.object({
-      name: z.string().optional(),
-      oldPassword: z.string().optional(),
-      newPassword: z.string().min(6).optional(),
-    })
-
-    const data = updateUserBodySchema.parse(request.body)
+  async handle(
+    request: FastifyRequest<{ Body: UpdateUserProfileBody }>,
+    reply: FastifyReply,
+  ) {
+    const data = request.body
     const userId = Number(request.user.sub)
 
     try {

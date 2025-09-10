@@ -1,8 +1,8 @@
 import { FastifyRequest, FastifyReply } from 'fastify'
-import { z } from 'zod'
 import { inject, injectable } from 'tsyringe'
 import { AuthenticateUserUseCase } from '@/core/use-cases/users/authenticate-user'
 import { InvalidCredentialsError } from '@/core/errors/invalid-credentials-error'
+import { AuthenticateUserBody } from '../../schemas/user-schemas'
 
 @injectable()
 export class AuthenticateUserController {
@@ -11,13 +11,11 @@ export class AuthenticateUserController {
     private authenticateUserUseCase: AuthenticateUserUseCase,
   ) {}
 
-  async handle(request: FastifyRequest, reply: FastifyReply) {
-    const authenticateBodySchema = z.object({
-      email: z.email(),
-      password: z.string(),
-    })
-
-    const { email, password } = authenticateBodySchema.parse(request.body)
+  async handle(
+    request: FastifyRequest<{ Body: AuthenticateUserBody }>,
+    reply: FastifyReply,
+  ) {
+    const { email, password } = request.body
 
     try {
       const result = await this.authenticateUserUseCase.execute({

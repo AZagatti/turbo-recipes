@@ -11,6 +11,8 @@ import fastifyJwt from '@fastify/jwt'
 import swagger from '@fastify/swagger'
 import scalar from '@scalar/fastify-api-reference'
 import {
+  jsonSchemaTransform,
+  jsonSchemaTransformObject,
   serializerCompiler,
   validatorCompiler,
   ZodTypeProvider,
@@ -27,6 +29,8 @@ const app = fastify({
       : true,
 }).withTypeProvider<ZodTypeProvider>()
 
+export type ZodServer = typeof app
+
 app.setValidatorCompiler(validatorCompiler)
 app.setSerializerCompiler(serializerCompiler)
 
@@ -38,6 +42,8 @@ app.register(swagger, {
       version: '1.0.0',
     },
   },
+  transform: jsonSchemaTransform,
+  transformObject: jsonSchemaTransformObject,
 })
 
 app.register(scalar, {

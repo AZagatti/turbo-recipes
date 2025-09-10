@@ -9,13 +9,17 @@ import { verifyJwt } from '../hooks/verify-jwt'
 import { ForgotPasswordController } from '../controllers/users/forgot-password-controller'
 import { ResetPasswordController } from '../controllers/users/reset-password-controller'
 import {
+  AuthenticateUserBody,
   authenticateUserSchema,
   CreateUserBody,
   createUserSchema,
   deleteUserProfileSchema,
+  ForgotPasswordBody,
   forgotPasswordSchema,
   getUserProfileSchema,
+  ResetPasswordBody,
   resetPasswordSchema,
+  UpdateUserProfileBody,
   updateUserProfileSchema,
 } from '../schemas/user-schemas'
 
@@ -41,18 +45,29 @@ export async function userRoutes(app: FastifyInstance) {
     ),
   )
   app.post('/sessions', { schema: authenticateUserSchema }, (request, reply) =>
-    authenticateUserController.handle(request, reply),
+    authenticateUserController.handle(
+      request as FastifyRequest<{ Body: AuthenticateUserBody }>,
+      reply,
+    ),
   )
 
   app.post(
     '/password/forgot',
     { schema: forgotPasswordSchema },
-    (request, reply) => forgotPasswordController.handle(request, reply),
+    (request, reply) =>
+      forgotPasswordController.handle(
+        request as FastifyRequest<{ Body: ForgotPasswordBody }>,
+        reply,
+      ),
   )
   app.post(
     '/password/reset',
     { schema: resetPasswordSchema },
-    (request, reply) => resetPasswordController.handle(request, reply),
+    (request, reply) =>
+      resetPasswordController.handle(
+        request as FastifyRequest<{ Body: ResetPasswordBody }>,
+        reply,
+      ),
   )
 
   app.get(
@@ -63,7 +78,11 @@ export async function userRoutes(app: FastifyInstance) {
   app.patch(
     '/me',
     { schema: updateUserProfileSchema, onRequest: [verifyJwt] },
-    (request, reply) => updateUserProfileController.handle(request, reply),
+    (request, reply) =>
+      updateUserProfileController.handle(
+        request as FastifyRequest<{ Body: UpdateUserProfileBody }>,
+        reply,
+      ),
   )
   app.delete(
     '/me',

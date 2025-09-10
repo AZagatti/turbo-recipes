@@ -1,8 +1,8 @@
 import { FastifyRequest, FastifyReply } from 'fastify'
-import { z } from 'zod'
 import { inject, injectable } from 'tsyringe'
 import { ForgotPasswordUseCase } from '@/core/use-cases/users/forgot-password'
 import { ResourceNotFoundError } from '@/core/errors/resource-not-found-error'
+import { ForgotPasswordBody } from '../../schemas/user-schemas'
 
 @injectable()
 export class ForgotPasswordController {
@@ -11,12 +11,11 @@ export class ForgotPasswordController {
     private forgotPasswordUseCase: ForgotPasswordUseCase,
   ) {}
 
-  async handle(request: FastifyRequest, reply: FastifyReply) {
-    const forgotPasswordBodySchema = z.object({
-      email: z.email(),
-    })
-
-    const { email } = forgotPasswordBodySchema.parse(request.body)
+  async handle(
+    request: FastifyRequest<{ Body: ForgotPasswordBody }>,
+    reply: FastifyReply,
+  ) {
+    const { email } = request.body
 
     try {
       await this.forgotPasswordUseCase.execute({

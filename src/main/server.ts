@@ -51,7 +51,7 @@ app.register(swagger, {
 app.register(scalar, {
   routePrefix: '/docs',
   configuration: {
-    theme: 'fastify',
+    theme: 'kepler',
   },
 })
 

@@ -11,6 +11,7 @@ import fastifyJwt from '@fastify/jwt'
 import swagger from '@fastify/swagger'
 import scalar from '@scalar/fastify-api-reference'
 import {
+  hasZodFastifySchemaValidationErrors,
   jsonSchemaTransform,
   jsonSchemaTransformObject,
   serializerCompiler,
@@ -62,6 +63,13 @@ app.after(() => {
 })
 
 app.setErrorHandler((error, request, reply) => {
+  if (hasZodFastifySchemaValidationErrors(error)) {
+    return reply.status(400).send({
+      message: 'Validation error.',
+      issues: error.validation,
+    })
+  }
+
   if (error instanceof ZodError) {
     return reply
       .status(400)

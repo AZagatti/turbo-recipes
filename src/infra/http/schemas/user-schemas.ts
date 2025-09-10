@@ -1,17 +1,24 @@
 import { z } from 'zod'
+import { errorResponseSchema } from './shared-schemas'
 
-const errorResponseSchema = z.object({
-  message: z.string(),
-  issues: z.any().optional(),
-})
+export const userSchema = z
+  .object({
+    id: z.number(),
+    name: z.string(),
+    email: z.email(),
+    createdAt: z.coerce.date(),
+    updatedAt: z.coerce.date(),
+  })
+  .register(z.globalRegistry, { id: 'user-schema', title: 'User' })
 
-const userResponseSchema = z.object({
-  id: z.number(),
-  name: z.string(),
-  email: z.email(),
-  createdAt: z.coerce.date(),
-  updatedAt: z.coerce.date(),
-})
+export const userResponseSchema = z
+  .object({
+    user: userSchema,
+  })
+  .register(z.globalRegistry, {
+    id: 'user-response-schema',
+    title: 'UserResponse',
+  })
 
 export const createUserSchema = {
   body: z.object({
@@ -20,9 +27,9 @@ export const createUserSchema = {
     password: z.string().min(6),
   }),
   response: {
-    201: z.object({ user: userResponseSchema }),
-    400: errorResponseSchema,
-    409: errorResponseSchema,
+    201: userResponseSchema,
+    400: errorResponseSchema.describe('Bad Request'),
+    409: errorResponseSchema.describe('Conflict'),
   },
 }
 
@@ -33,7 +40,7 @@ export const authenticateUserSchema = {
   }),
   response: {
     200: z.object({ token: z.string() }),
-    401: errorResponseSchema,
+    401: errorResponseSchema.describe('Unauthorized'),
   },
 }
 
@@ -42,8 +49,8 @@ export const forgotPasswordSchema = {
     email: z.email(),
   }),
   response: {
-    204: z.null(),
-    400: errorResponseSchema,
+    204: z.null().describe('No Content'),
+    400: errorResponseSchema.describe('Bad Request'),
   },
 }
 
@@ -53,15 +60,15 @@ export const resetPasswordSchema = {
     password: z.string().min(6),
   }),
   response: {
-    204: z.null(),
-    400: errorResponseSchema,
+    204: z.null().describe('No Content'),
+    400: errorResponseSchema.describe('Bad Request'),
   },
 }
 
 export const getUserProfileSchema = {
   response: {
-    200: z.object({ user: userResponseSchema }),
-    401: errorResponseSchema,
+    200: userResponseSchema,
+    401: errorResponseSchema.describe('Unauthorized'),
   },
 }
 
@@ -72,16 +79,16 @@ export const updateUserProfileSchema = {
     newPassword: z.string().min(6).optional(),
   }),
   response: {
-    200: z.object({ user: userResponseSchema }),
-    400: errorResponseSchema,
-    401: errorResponseSchema,
+    200: userResponseSchema,
+    400: errorResponseSchema.describe('Bad Request'),
+    401: errorResponseSchema.describe('Unauthorized'),
   },
 }
 
 export const deleteUserProfileSchema = {
   response: {
-    204: z.null(),
-    401: errorResponseSchema,
+    204: z.null().describe('No Content'),
+    401: errorResponseSchema.describe('Unauthorized'),
   },
 }
 

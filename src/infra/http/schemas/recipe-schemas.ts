@@ -1,24 +1,31 @@
 import { z } from 'zod'
-
-const errorResponseSchema = z.object({
-  message: z.string(),
-  issues: z.any().optional(),
-})
+import { errorResponseSchema } from './shared-schemas'
 
 const authorResponseSchema = z.object({
   id: z.number(),
   name: z.string(),
 })
 
-const recipeResponseSchema = z.object({
-  id: z.number(),
-  title: z.string(),
-  ingredients: z.string(),
-  method: z.string(),
-  author: authorResponseSchema.nullable(),
-  createdAt: z.coerce.date(),
-  updatedAt: z.coerce.date(),
-})
+export const recipeSchema = z
+  .object({
+    id: z.number(),
+    title: z.string(),
+    ingredients: z.string(),
+    method: z.string(),
+    author: authorResponseSchema.nullable(),
+    createdAt: z.coerce.date(),
+    updatedAt: z.coerce.date(),
+  })
+  .register(z.globalRegistry, { id: 'recipe', title: 'Recipe' })
+
+export const recipeResponseSchema = z
+  .object({
+    recipe: recipeSchema,
+  })
+  .register(z.globalRegistry, {
+    id: 'recipe-response',
+    title: 'RecipeResponse',
+  })
 
 export const createRecipeSchema = {
   body: z.object({
@@ -27,9 +34,9 @@ export const createRecipeSchema = {
     method: z.string(),
   }),
   response: {
-    201: z.object({ recipe: recipeResponseSchema }),
-    400: errorResponseSchema,
-    404: errorResponseSchema,
+    201: recipeResponseSchema,
+    400: errorResponseSchema.describe('Bad Request'),
+    404: errorResponseSchema.describe('Not Found'),
   },
 }
 
@@ -38,8 +45,8 @@ export const getRecipeByIdSchema = {
     id: z.coerce.number().int(),
   }),
   response: {
-    200: z.object({ recipe: recipeResponseSchema }),
-    404: errorResponseSchema,
+    200: recipeResponseSchema,
+    404: errorResponseSchema.describe('Not Found'),
   },
 }
 
@@ -50,7 +57,7 @@ export const listRecipesSchema = {
   }),
   response: {
     200: z.object({
-      recipes: z.array(recipeResponseSchema),
+      recipes: recipeSchema.array(),
     }),
   },
 }
@@ -63,7 +70,7 @@ export const searchRecipesSchema = {
   }),
   response: {
     200: z.object({
-      recipes: z.array(recipeResponseSchema),
+      recipes: recipeSchema.array(),
     }),
   },
 }
@@ -78,10 +85,10 @@ export const updateRecipeSchema = {
     method: z.string().optional(),
   }),
   response: {
-    200: z.object({ recipe: recipeResponseSchema }),
-    400: errorResponseSchema,
-    403: errorResponseSchema,
-    404: errorResponseSchema,
+    200: recipeResponseSchema,
+    400: errorResponseSchema.describe('Bad Request'),
+    403: errorResponseSchema.describe('Forbidden'),
+    404: errorResponseSchema.describe('Not Found'),
   },
 }
 
@@ -90,9 +97,9 @@ export const deleteRecipeSchema = {
     id: z.coerce.number().int(),
   }),
   response: {
-    204: z.null(),
-    403: errorResponseSchema,
-    404: errorResponseSchema,
+    204: z.null().describe('No Content'),
+    403: errorResponseSchema.describe('Forbidden'),
+    404: errorResponseSchema.describe('Not Found'),
   },
 }
 

@@ -1,5 +1,6 @@
 import 'reflect-metadata'
 import './container'
+import '@/infra/http/schemas'
 import fastify from 'fastify'
 import z, { ZodError } from 'zod'
 import { UserAlreadyExistsError } from '@/core/errors/user-already-exists-error'

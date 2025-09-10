@@ -1,8 +1,8 @@
-import { FastifyRequest, FastifyReply } from 'fastify'
-import { z } from 'zod'
-import { inject, injectable } from 'tsyringe'
 import { SearchRecipesUseCase } from '@/core/use-cases/recipes/search-recipes'
+import { FastifyReply, FastifyRequest } from 'fastify'
+import { inject, injectable } from 'tsyringe'
 import { RecipePresenter } from '../../presenters/recipe-presenter'
+import { SearchRecipesQuery } from '../../schemas/recipe-schemas'
 
 @injectable()
 export class SearchRecipesController {
@@ -11,14 +11,11 @@ export class SearchRecipesController {
     private searchRecipesUseCase: SearchRecipesUseCase,
   ) {}
 
-  async handle(request: FastifyRequest, reply: FastifyReply) {
-    const searchQuerySchema = z.object({
-      q: z.string(),
-      page: z.coerce.number().int().min(1).default(1),
-      limit: z.coerce.number().int().min(1).max(50).default(20),
-    })
-
-    const { q, page, limit } = searchQuerySchema.parse(request.query)
+  async handle(
+    request: FastifyRequest<{ Querystring: SearchRecipesQuery }>,
+    reply: FastifyReply,
+  ) {
+    const { q, page, limit } = request.query
 
     const { recipes } = await this.searchRecipesUseCase.execute({
       query: q,

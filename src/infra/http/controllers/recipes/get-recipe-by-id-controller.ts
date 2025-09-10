@@ -1,8 +1,8 @@
 import { FastifyRequest, FastifyReply } from 'fastify'
-import { z } from 'zod'
 import { inject, injectable } from 'tsyringe'
 import { GetRecipeByIdUseCase } from '@/core/use-cases/recipes/get-recipe-by-id'
 import { RecipePresenter } from '../../presenters/recipe-presenter'
+import { GetRecipeByIdParams } from '../../schemas/recipe-schemas'
 
 @injectable()
 export class GetRecipeByIdController {
@@ -11,12 +11,11 @@ export class GetRecipeByIdController {
     private getRecipeByIdUseCase: GetRecipeByIdUseCase,
   ) {}
 
-  async handle(request: FastifyRequest, reply: FastifyReply) {
-    const getRecipeParamsSchema = z.object({
-      id: z.coerce.number().int(),
-    })
-
-    const { id } = getRecipeParamsSchema.parse(request.params)
+  async handle(
+    request: FastifyRequest<{ Params: GetRecipeByIdParams }>,
+    reply: FastifyReply,
+  ) {
+    const { id } = request.params
 
     const { recipe } = await this.getRecipeByIdUseCase.execute({
       recipeId: id,

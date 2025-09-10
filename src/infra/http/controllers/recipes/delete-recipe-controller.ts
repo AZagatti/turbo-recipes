@@ -1,7 +1,7 @@
 import { FastifyRequest, FastifyReply } from 'fastify'
-import { z } from 'zod'
 import { inject, injectable } from 'tsyringe'
 import { DeleteRecipeUseCase } from '@/core/use-cases/recipes/delete-recipe'
+import { DeleteRecipeParams } from '../../schemas/recipe-schemas'
 
 @injectable()
 export class DeleteRecipeController {
@@ -10,12 +10,11 @@ export class DeleteRecipeController {
     private deleteRecipeUseCase: DeleteRecipeUseCase,
   ) {}
 
-  async handle(request: FastifyRequest, reply: FastifyReply) {
-    const deleteRecipeParamsSchema = z.object({
-      id: z.coerce.number().int(),
-    })
-
-    const { id } = deleteRecipeParamsSchema.parse(request.params)
+  async handle(
+    request: FastifyRequest<{ Params: DeleteRecipeParams }>,
+    reply: FastifyReply,
+  ) {
+    const { id } = request.params
 
     const authorId = Number(request.user.sub)
 

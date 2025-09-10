@@ -1,8 +1,8 @@
 import { FastifyRequest, FastifyReply } from 'fastify'
-import { z } from 'zod'
 import { inject, injectable } from 'tsyringe'
 import { ListRecipesUseCase } from '@/core/use-cases/recipes/list-recipes'
 import { RecipePresenter } from '../../presenters/recipe-presenter'
+import { ListRecipesQuery } from '../../schemas/recipe-schemas'
 
 @injectable()
 export class ListRecipesController {
@@ -11,13 +11,11 @@ export class ListRecipesController {
     private listRecipesUseCase: ListRecipesUseCase,
   ) {}
 
-  async handle(request: FastifyRequest, reply: FastifyReply) {
-    const listRecipesQuerySchema = z.object({
-      page: z.coerce.number().int().min(1).default(1),
-      limit: z.coerce.number().int().min(1).max(50).default(20),
-    })
-
-    const { page, limit } = listRecipesQuerySchema.parse(request.query)
+  async handle(
+    request: FastifyRequest<{ Querystring: ListRecipesQuery }>,
+    reply: FastifyReply,
+  ) {
+    const { page, limit } = request.query
 
     const { recipes } = await this.listRecipesUseCase.execute({ page, limit })
 

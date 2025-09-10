@@ -1,8 +1,11 @@
 import { FastifyRequest, FastifyReply } from 'fastify'
-import { z } from 'zod'
 import { inject, injectable } from 'tsyringe'
 import { UpdateRecipeUseCase } from '@/core/use-cases/recipes/update-recipe'
 import { RecipePresenter } from '../../presenters/recipe-presenter'
+import {
+  UpdateRecipeBody,
+  UpdateRecipeParams,
+} from '../../schemas/recipe-schemas'
 
 @injectable()
 export class UpdateRecipeController {
@@ -11,18 +14,15 @@ export class UpdateRecipeController {
     private updateRecipeUseCase: UpdateRecipeUseCase,
   ) {}
 
-  async handle(request: FastifyRequest, reply: FastifyReply) {
-    const updateRecipeParamsSchema = z.object({
-      id: z.coerce.number().int(),
-    })
-    const updateRecipeBodySchema = z.object({
-      title: z.string().optional(),
-      ingredients: z.string().optional(),
-      method: z.string().optional(),
-    })
-
-    const { id } = updateRecipeParamsSchema.parse(request.params)
-    const data = updateRecipeBodySchema.parse(request.body)
+  async handle(
+    request: FastifyRequest<{
+      Params: UpdateRecipeParams
+      Body: UpdateRecipeBody
+    }>,
+    reply: FastifyReply,
+  ) {
+    const { id } = request.params
+    const data = request.body
 
     const authorId = Number(request.user.sub)
 

@@ -19,6 +19,8 @@ import {
   validatorCompiler,
   ZodTypeProvider,
 } from 'fastify-type-provider-zod'
+import fastifyRateLimit from '@fastify/rate-limit'
+import Redis from 'ioredis'
 
 const app = fastify({
   logger:
@@ -31,7 +33,19 @@ const app = fastify({
       : true,
 }).withTypeProvider<ZodTypeProvider>()
 
-export type ZodServer = typeof app
+const redis = new Redis(env.REDIS_URL, {
+  connectTimeout: 500,
+  maxRetriesPerRequest: 3,
+})
+
+await app.register(fastifyRateLimit, {
+  max: 100,
+  timeWindow: '1 minute',
+  redis,
+  keyGenerator: (request) => {
+    return request.ip
+  },
+})
 
 app.setValidatorCompiler(validatorCompiler)
 app.setSerializerCompiler(serializerCompiler)

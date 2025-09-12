@@ -7,14 +7,17 @@ import { users, recipes } from '@/infra/db/schema'
 import { faker } from '@faker-js/faker'
 import { eq } from 'drizzle-orm'
 import { makeRecipe } from '../_test/recipes-factory'
+import { FakeCacheProvider } from '../_test/fake-cache-provider'
 
 let recipesRepository: DrizzleRecipesRepository
+let cacheProvider: FakeCacheProvider
 let usersRepository: DrizzleUsersRepository
 let sut: UpdateRecipeUseCase
 
 describe('Update Recipe Use Case (Integration)', () => {
   beforeAll(() => {
-    recipesRepository = new DrizzleRecipesRepository()
+    cacheProvider = new FakeCacheProvider()
+    recipesRepository = new DrizzleRecipesRepository(cacheProvider)
     usersRepository = new DrizzleUsersRepository()
     sut = new UpdateRecipeUseCase(recipesRepository)
   })

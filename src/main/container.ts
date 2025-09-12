@@ -19,6 +19,8 @@ import { ResendMailProvider } from '@/infra/mail/resend-mail-provider'
 import { LogMailProvider } from '@/infra/mail/log-mail-provider'
 import { QueueProvider } from '@/core/contracts/queue-provider'
 import { BullmqQueueProvider } from '@/infra/queue/bullmq-queue-provider'
+import { CacheProvider } from '@/core/contracts/cache-provider'
+import { RedisCacheProvider } from '@/infra/cache/redis-cache-provider'
 
 container.registerSingleton<UsersRepository>(
   'UsersRepository',
@@ -49,3 +51,5 @@ if (env.NODE_ENV === 'production') {
 } else {
   container.registerSingleton<MailProvider>('MailProvider', LogMailProvider)
 }
+
+container.registerSingleton<CacheProvider>('CacheProvider', RedisCacheProvider)

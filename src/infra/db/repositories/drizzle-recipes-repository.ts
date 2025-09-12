@@ -2,11 +2,17 @@ import { RecipesRepository } from '@/core/repositories/recipes-repository'
 import { NewRecipe, Recipe } from '@/core/models'
 import { db } from '..'
 import { recipes } from '../schema'
-import { injectable } from 'tsyringe'
+import { inject, injectable } from 'tsyringe'
 import { desc, eq, sql } from 'drizzle-orm'
+import { CacheProvider } from '@/core/contracts/cache-provider'
 
 @injectable()
 export class DrizzleRecipesRepository implements RecipesRepository {
+  constructor(
+    @inject('CacheProvider')
+    private cache: CacheProvider,
+  ) {}
+
   async findMany({
     page,
     limit,
@@ -14,6 +20,14 @@ export class DrizzleRecipesRepository implements RecipesRepository {
     page: number
     limit: number
   }): Promise<Recipe[]> {
+    const cacheKey = `recipes:page:${page}:limit:${limit}`
+
+    const cachedRecipes = await this.cache.get(cacheKey)
+
+    if (cachedRecipes) {
+      return JSON.parse(cachedRecipes)
+    }
+
     const recipesList = await db.query.recipes.findMany({
       limit,
       offset: (page - 1) * limit,
@@ -27,10 +41,20 @@ export class DrizzleRecipesRepository implements RecipesRepository {
       },
     })
 
+    await this.cache.set(cacheKey, JSON.stringify(recipesList), 120)
+
     return recipesList
   }
 
   async findById(id: number): Promise<Recipe | null> {
+    const cacheKey = `recipe:${id}`
+
+    const cachedRecipe = await this.cache.get(cacheKey)
+
+    if (cachedRecipe) {
+      return JSON.parse(cachedRecipe)
+    }
+
     const recipe = await db.query.recipes.findFirst({
       where: eq(recipes.id, id),
       with: {
@@ -43,11 +67,18 @@ export class DrizzleRecipesRepository implements RecipesRepository {
       },
     })
 
-    return recipe || null
+    if (!recipe) {
+      return null
+    }
+
+    await this.cache.set(cacheKey, JSON.stringify(recipe), 300)
+
+    return recipe
   }
 
   async create(data: NewRecipe): Promise<Recipe> {
     const result = await db.insert(recipes).values(data).returning()
+
     return result[0]
   }
 
@@ -61,10 +92,16 @@ export class DrizzleRecipesRepository implements RecipesRepository {
         updatedAt: new Date(),
       })
       .where(eq(recipes.id, recipe.id))
+
+    const cacheKey = `recipe:${recipe.id}`
+    await this.cache.invalidate(cacheKey)
   }
 
   async delete(recipe: Recipe): Promise<void> {
     await db.delete(recipes).where(eq(recipes.id, recipe.id))
+
+    const cacheKey = `recipe:${recipe.id}`
+    await this.cache.invalidate(cacheKey)
   }
 
   async searchMany({

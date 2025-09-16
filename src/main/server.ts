@@ -1,26 +1,27 @@
 import 'reflect-metadata'
 import './container'
 import '@/infra/http/schemas'
-import fastify from 'fastify'
-import z, { ZodError } from 'zod'
+
+import { env } from '@/config'
+import { NotAllowedError } from '@/core/errors/not-allowed-error'
+import { ResourceNotFoundError } from '@/core/errors/resource-not-found-error'
 import { UserAlreadyExistsError } from '@/core/errors/user-already-exists-error'
 import { appRoutes } from '@/infra/http/routes'
-import { env } from '@/config'
-import { ResourceNotFoundError } from '@/core/errors/resource-not-found-error'
-import { NotAllowedError } from '@/core/errors/not-allowed-error'
 import fastifyJwt from '@fastify/jwt'
-import swagger from '@fastify/swagger'
-import scalar from '@scalar/fastify-api-reference'
+import fastifyRateLimit from '@fastify/rate-limit'
+import fastify from 'fastify'
 import {
   hasZodFastifySchemaValidationErrors,
-  jsonSchemaTransform,
-  jsonSchemaTransformObject,
   serializerCompiler,
   validatorCompiler,
   ZodTypeProvider,
 } from 'fastify-type-provider-zod'
-import fastifyRateLimit from '@fastify/rate-limit'
 import Redis from 'ioredis'
+import z, { ZodError } from 'zod'
+import { swaggerPlugin } from './plugins/swagger'
+import fastifyHelmet from '@fastify/helmet'
+import { setupGracefulShutdown } from './shutdown'
+import { connection } from '@/infra/db/index.js'
 
 const app = fastify({
   logger:
@@ -50,24 +51,9 @@ await app.register(fastifyRateLimit, {
 app.setValidatorCompiler(validatorCompiler)
 app.setSerializerCompiler(serializerCompiler)
 
-app.register(swagger, {
-  openapi: {
-    info: {
-      title: 'Turbo Recipes API',
-      description: 'API for recipe application',
-      version: '1.0.0',
-    },
-  },
-  transform: jsonSchemaTransform,
-  transformObject: jsonSchemaTransformObject,
-})
+app.register(fastifyHelmet)
 
-app.register(scalar, {
-  routePrefix: '/docs',
-  configuration: {
-    theme: 'kepler',
-  },
-})
+app.register(swaggerPlugin)
 
 app.register(fastifyJwt, {
   secret: env.JWT_SECRET,
@@ -111,6 +97,8 @@ app.setErrorHandler((error, request, reply) => {
 app.listen({ port: env.PORT, host: env.HOST }).then(() => {
   console.log(`🚀 Server listening on http://${env.HOST}:${env.PORT}`)
 })
+
+setupGracefulShutdown(app, connection)
 
 if (env.RUN_WORKER_IN_API) {
   import('./worker.js')

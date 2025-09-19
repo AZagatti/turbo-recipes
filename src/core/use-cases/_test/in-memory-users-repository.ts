@@ -1,5 +1,6 @@
 import { User, NewUser } from '@/core/models'
 import { UsersRepository } from '@/core/repositories/users-repository'
+import { faker } from '@faker-js/faker'
 
 export class InMemoryUsersRepository implements UsersRepository {
   public items: User[] = []
@@ -9,14 +10,14 @@ export class InMemoryUsersRepository implements UsersRepository {
     return user || null
   }
 
-  async findById(id: number) {
+  async findById(id: string) {
     const user = this.items.find((item) => item.id === id)
     return user || null
   }
 
   async create(user: NewUser) {
     const newUser = {
-      id: this.items.length + 1,
+      id: faker.string.uuid(),
       name: user.name,
       email: user.email,
       passwordHash: user.passwordHash,

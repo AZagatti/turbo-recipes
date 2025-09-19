@@ -24,7 +24,7 @@ export class DrizzlePasswordResetTokensRepository
     return result[0] || null
   }
 
-  async deleteByUserId(userId: number): Promise<void> {
+  async deleteByUserId(userId: string): Promise<void> {
     await db
       .delete(passwordResetTokens)
       .where(eq(passwordResetTokens.userId, userId))

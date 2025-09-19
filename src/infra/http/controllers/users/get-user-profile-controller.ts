@@ -11,7 +11,7 @@ export class GetUserProfileController {
   ) {}
 
   async handle(request: FastifyRequest, reply: FastifyReply) {
-    const userId = Number(request.user.sub)
+    const userId = request.user.sub
 
     const result = await this.getUserProfileUseCase.execute({
       userId,

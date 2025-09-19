@@ -9,7 +9,7 @@ interface CreateRecipeRequest {
   title: string
   ingredients: string
   method: string
-  authorId: number
+  authorId: string
 }
 
 interface CreateRecipeResponse {

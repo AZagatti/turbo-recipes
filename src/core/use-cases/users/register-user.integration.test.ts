@@ -32,7 +32,7 @@ describe('Register User Use Case (Integration)', () => {
 
     const result = await sut.execute(userData)
 
-    expect(result.user.id).toEqual(expect.any(Number))
+    expect(result.user.id).toEqual(expect.any(String))
 
     const userInDb = await db
       .select()

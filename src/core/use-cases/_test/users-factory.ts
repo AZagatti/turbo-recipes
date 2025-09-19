@@ -3,7 +3,7 @@ import { NewUser, User } from '@/core/models'
 
 export function makeUser(override: Partial<User> = {}): User {
   return {
-    id: faker.number.int(),
+    id: faker.string.uuid(),
     name: faker.person.fullName(),
     email: faker.internet.email(),
     passwordHash: 'hashed-password',

@@ -5,8 +5,8 @@ import { ResourceNotFoundError } from '@/core/errors/resource-not-found-error'
 import { NotAllowedError } from '@/core/errors/not-allowed-error'
 
 interface DeleteRecipeRequest {
-  recipeId: number
-  authorId: number
+  recipeId: string
+  authorId: string
 }
 
 type DeleteRecipeResponse = void

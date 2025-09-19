@@ -8,7 +8,7 @@ import { InvalidCredentialsError } from '@/core/errors/invalid-credentials-error
 import { ResourceNotFoundError } from '@/core/errors/resource-not-found-error'
 
 interface UpdateUserProfileRequest {
-  userId: number
+  userId: string
   data: {
     name?: string
     oldPassword?: string

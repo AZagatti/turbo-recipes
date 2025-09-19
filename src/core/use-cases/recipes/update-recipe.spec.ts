@@ -4,23 +4,25 @@ import { UpdateRecipeUseCase } from './update-recipe'
 import { makeRecipe } from '../_test/recipes-factory'
 import { ResourceNotFoundError } from '@/core/errors/resource-not-found-error'
 import { NotAllowedError } from '@/core/errors/not-allowed-error'
+import { Recipe } from '@/core/models'
 
 let recipesRepository: InMemoryRecipesRepository
 let sut: UpdateRecipeUseCase
+let recipe: Recipe
 
 describe('Update Recipe Use Case', () => {
   beforeEach(async () => {
     recipesRepository = new InMemoryRecipesRepository()
     sut = new UpdateRecipeUseCase(recipesRepository)
 
-    const newRecipe = makeRecipe({ authorId: 1 })
-    await recipesRepository.create(newRecipe)
+    const newRecipe = makeRecipe({ authorId: 'user-1' })
+    recipe = await recipesRepository.create(newRecipe)
   })
 
   it('updates a recipe', async () => {
     const result = await sut.execute({
-      recipeId: 1,
-      authorId: 1,
+      recipeId: recipe.id,
+      authorId: 'user-1',
       data: {
         title: 'Bolo de Cenoura Melhorado',
       },
@@ -35,8 +37,8 @@ describe('Update Recipe Use Case', () => {
   it('throws an error if recipe is not found', async () => {
     await expect(
       sut.execute({
-        recipeId: 99,
-        authorId: 1,
+        recipeId: 'not-found',
+        authorId: 'user-1',
         data: { title: 'Novo Título' },
       }),
     ).rejects.toBeInstanceOf(ResourceNotFoundError)
@@ -45,8 +47,8 @@ describe('Update Recipe Use Case', () => {
   it('throws an error if a different user tries to update the recipe', async () => {
     await expect(
       sut.execute({
-        recipeId: 1,
-        authorId: 2,
+        recipeId: recipe.id,
+        authorId: 'not-found',
         data: { title: 'Novo Título' },
       }),
     ).rejects.toBeInstanceOf(NotAllowedError)

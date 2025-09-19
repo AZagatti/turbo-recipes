@@ -4,7 +4,7 @@ import { injectable, inject } from 'tsyringe'
 import { ResourceNotFoundError } from '@/core/errors/resource-not-found-error'
 
 interface DeleteUserProfileRequest {
-  userId: number
+  userId: string
 }
 
 type DeleteUserProfileResponse = void

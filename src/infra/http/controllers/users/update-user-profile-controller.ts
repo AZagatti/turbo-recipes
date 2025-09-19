@@ -17,7 +17,7 @@ export class UpdateUserProfileController {
     reply: FastifyReply,
   ) {
     const data = request.body
-    const userId = Number(request.user.sub)
+    const userId = request.user.sub
 
     try {
       const result = await this.updateUserProfileUseCase.execute({

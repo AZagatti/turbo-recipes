@@ -12,13 +12,13 @@ describe('Delete User Profile Use Case', () => {
     usersRepository = new InMemoryUsersRepository()
     sut = new DeleteUserProfileUseCase(usersRepository)
 
-    const user = makeUser({ id: 1 })
+    const user = makeUser({ id: 'user-1' })
     usersRepository.items.push(user)
   })
 
   it('deletes a user profile', async () => {
     await sut.execute({
-      userId: 1,
+      userId: 'user-1',
     })
 
     expect(usersRepository.items).toHaveLength(0)
@@ -27,7 +27,7 @@ describe('Delete User Profile Use Case', () => {
   it('throws an error if user is not found', async () => {
     await expect(
       sut.execute({
-        userId: 99,
+        userId: 'not-found',
       }),
     ).rejects.toBeInstanceOf(ResourceNotFoundError)
   })

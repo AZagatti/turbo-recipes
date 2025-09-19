@@ -10,7 +10,7 @@ export class DeleteUserProfileController {
   ) {}
 
   async handle(request: FastifyRequest, reply: FastifyReply) {
-    const userId = Number(request.user.sub)
+    const userId = request.user.sub
 
     await this.deleteUserProfileUseCase.execute({
       userId,

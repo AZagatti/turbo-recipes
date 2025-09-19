@@ -22,7 +22,7 @@ describe('Register User Use Case', () => {
       password: 'password123',
     })
 
-    expect(result.user.id).toEqual(expect.any(Number))
+    expect(result.user.id).toEqual(expect.any(String))
     expect(result.user.name).toEqual('John Doe')
   })
 

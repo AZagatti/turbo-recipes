@@ -1,6 +1,6 @@
 import { NewPasswordResetToken, PasswordResetToken } from '@/core/models'
 import { PasswordResetTokensRepository } from '@/core/repositories/password-reset-tokens-repository'
-import { randomInt } from 'node:crypto'
+import { faker } from '@faker-js/faker'
 
 export class InMemoryPasswordResetTokensRepository
   implements PasswordResetTokensRepository
@@ -9,7 +9,7 @@ export class InMemoryPasswordResetTokensRepository
 
   async create(data: NewPasswordResetToken): Promise<PasswordResetToken> {
     const passwordResetToken = {
-      id: randomInt(1, 100),
+      id: faker.string.uuid(),
       token: data.token,
       userId: data.userId,
       expiresAt: data.expiresAt,
@@ -25,7 +25,7 @@ export class InMemoryPasswordResetTokensRepository
     return passwordResetToken || null
   }
 
-  async deleteByUserId(userId: number): Promise<void> {
+  async deleteByUserId(userId: string): Promise<void> {
     this.items = this.items.filter((item) => item.userId !== userId)
   }
 }

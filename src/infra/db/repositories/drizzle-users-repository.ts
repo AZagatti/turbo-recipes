@@ -12,7 +12,7 @@ export class DrizzleUsersRepository implements UsersRepository {
     return result[0] || null
   }
 
-  async findById(id: number): Promise<User | null> {
+  async findById(id: string): Promise<User | null> {
     const result = await db.select().from(users).where(eq(users.id, id))
     return result[0] || null
   }

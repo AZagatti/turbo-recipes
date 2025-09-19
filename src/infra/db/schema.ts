@@ -1,11 +1,10 @@
 import { relations, SQL, sql } from 'drizzle-orm'
 import {
   pgTable,
-  serial,
+  uuid,
   varchar,
   text,
   timestamp,
-  integer,
   index,
   customType,
 } from 'drizzle-orm/pg-core'
@@ -17,7 +16,7 @@ export const tsvector = customType<{ data: string }>({
 })
 
 export const users = pgTable('users', {
-  id: serial('id').primaryKey(),
+  id: uuid('id').primaryKey().defaultRandom(),
   name: varchar('name', { length: 255 }).notNull(),
   email: varchar('email', { length: 255 }).notNull().unique(),
   passwordHash: varchar('password_hash', { length: 255 }).notNull(),
@@ -32,11 +31,11 @@ export const userRelations = relations(users, ({ many }) => ({
 export const recipes = pgTable(
   'recipes',
   {
-    id: serial('id').primaryKey(),
+    id: uuid('id').primaryKey().defaultRandom(),
     title: varchar('title', { length: 255 }).notNull(),
     ingredients: text('ingredients').notNull(),
     method: text('method').notNull(),
-    authorId: integer('author_id').references(() => users.id, {
+    authorId: uuid('author_id').references(() => users.id, {
       onDelete: 'set null',
     }),
     createdAt: timestamp('created_at').defaultNow().notNull(),
@@ -58,9 +57,9 @@ export const recipesRelations = relations(recipes, ({ one }) => ({
 }))
 
 export const passwordResetTokens = pgTable('password_reset_tokens', {
-  id: serial('id').primaryKey(),
+  id: uuid('id').primaryKey().defaultRandom(),
   token: varchar('token', { length: 255 }).notNull().unique(),
-  userId: integer('user_id')
+  userId: uuid('user_id')
     .notNull()
     .references(() => users.id, {
       onDelete: 'cascade',

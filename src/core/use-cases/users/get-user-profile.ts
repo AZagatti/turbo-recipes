@@ -5,7 +5,7 @@ import { injectable, inject } from 'tsyringe'
 import { ResourceNotFoundError } from '@/core/errors/resource-not-found-error'
 
 interface GetUserProfileRequest {
-  userId: number
+  userId: string
 }
 
 interface GetUserProfileResponse {

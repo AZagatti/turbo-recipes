@@ -18,7 +18,7 @@ export class CreateRecipeController {
   ) {
     const { title, ingredients, method } = request.body
 
-    const authorId = Number(request.user.sub)
+    const authorId = request.user.sub
 
     try {
       const { recipe } = await this.createRecipeUseCase.execute({

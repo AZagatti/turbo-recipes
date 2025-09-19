@@ -16,7 +16,7 @@ export class DeleteRecipeController {
   ) {
     const { id } = request.params
 
-    const authorId = Number(request.user.sub)
+    const authorId = request.user.sub
 
     await this.deleteRecipeUseCase.execute({
       recipeId: id,

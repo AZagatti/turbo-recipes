@@ -46,7 +46,7 @@ export class DrizzleRecipesRepository implements RecipesRepository {
     return recipesList
   }
 
-  async findById(id: number): Promise<Recipe | null> {
+  async findById(id: string): Promise<Recipe | null> {
     const cacheKey = `recipe:${id}`
 
     const cachedRecipe = await this.cache.get(cacheKey)

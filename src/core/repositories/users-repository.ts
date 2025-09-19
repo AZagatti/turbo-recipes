@@ -3,7 +3,7 @@ import { NewUser } from '../models'
 
 export interface UsersRepository {
   findByEmail(email: string): Promise<User | null>
-  findById(id: number): Promise<User | null>
+  findById(id: string): Promise<User | null>
   create(user: NewUser): Promise<User>
   save(user: User): Promise<void>
   delete(user: User): Promise<void>

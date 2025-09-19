@@ -1,7 +1,7 @@
 CREATE TABLE "password_reset_tokens" (
-	"id" serial PRIMARY KEY NOT NULL,
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"token" varchar(255) NOT NULL,
-	"user_id" integer NOT NULL,
+	"user_id" uuid NOT NULL,
 	"expires_at" timestamp NOT NULL,
 	CONSTRAINT "password_reset_tokens_token_unique" UNIQUE("token")
 );

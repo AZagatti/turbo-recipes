@@ -30,7 +30,7 @@ describe('Authenticate User Use Case', () => {
     )
 
     const user = makeUser({
-      id: 1,
+      id: '1',
       email: 'john.doe@email.com',
       passwordHash: 'password123-hashed',
     })

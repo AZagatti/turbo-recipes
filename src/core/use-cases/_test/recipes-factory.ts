@@ -7,7 +7,7 @@ export function makeRecipe(override: Partial<NewRecipe> = {}): NewRecipe {
     title: faker.lorem.sentence(),
     ingredients: faker.lorem.words(10),
     method: faker.lorem.paragraphs(2),
-    authorId: 1,
+    authorId: faker.string.uuid(),
     ...override,
   }
 }

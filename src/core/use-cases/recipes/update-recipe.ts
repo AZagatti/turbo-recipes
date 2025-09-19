@@ -6,8 +6,8 @@ import { NotAllowedError } from '@/core/errors/not-allowed-error'
 import { Usecase } from '../usecase'
 
 interface UpdateRecipeRequest {
-  recipeId: number
-  authorId: number
+  recipeId: string
+  authorId: string
   data: {
     title?: string
     ingredients?: string

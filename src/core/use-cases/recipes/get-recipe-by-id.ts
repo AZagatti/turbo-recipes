@@ -5,7 +5,7 @@ import { injectable, inject } from 'tsyringe'
 import { ResourceNotFoundError } from '@/core/errors/resource-not-found-error'
 
 interface GetRecipeByIdRequest {
-  recipeId: number
+  recipeId: string
 }
 
 interface GetRecipeByIdResponse {

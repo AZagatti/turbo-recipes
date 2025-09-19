@@ -2,13 +2,13 @@ import { z } from 'zod'
 import { errorResponseSchema } from './shared-schemas'
 
 const authorResponseSchema = z.object({
-  id: z.number(),
+  id: z.uuid(),
   name: z.string(),
 })
 
 export const recipeSchema = z
   .object({
-    id: z.number(),
+    id: z.uuid(),
     title: z.string(),
     ingredients: z.string(),
     method: z.string(),
@@ -42,7 +42,7 @@ export const createRecipeSchema = {
 
 export const getRecipeByIdSchema = {
   params: z.object({
-    id: z.coerce.number().int(),
+    id: z.uuid(),
   }),
   response: {
     200: recipeResponseSchema,
@@ -77,7 +77,7 @@ export const searchRecipesSchema = {
 
 export const updateRecipeSchema = {
   params: z.object({
-    id: z.coerce.number().int(),
+    id: z.uuid(),
   }),
   body: z.object({
     title: z.string().optional(),
@@ -94,7 +94,7 @@ export const updateRecipeSchema = {
 
 export const deleteRecipeSchema = {
   params: z.object({
-    id: z.coerce.number().int(),
+    id: z.uuid(),
   }),
   response: {
     204: z.null().describe('No Content'),

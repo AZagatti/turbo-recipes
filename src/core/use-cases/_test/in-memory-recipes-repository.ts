@@ -1,10 +1,11 @@
 import { NewRecipe, Recipe } from '@/core/models'
 import { RecipesRepository } from '@/core/repositories/recipes-repository'
+import { faker } from '@faker-js/faker'
 
 export class InMemoryRecipesRepository implements RecipesRepository {
   public items: Recipe[] = []
 
-  async findById(id: number) {
+  async findById(id: string) {
     const recipe = this.items.find((item) => item.id === id)
     return recipe || null
   }
@@ -16,7 +17,7 @@ export class InMemoryRecipesRepository implements RecipesRepository {
 
   async create(data: NewRecipe): Promise<Recipe> {
     const newRecipe = {
-      id: this.items.length + 1,
+      id: faker.string.uuid(),
       title: data.title,
       ingredients: data.ingredients,
       method: data.method,

@@ -47,7 +47,7 @@ describe('Create Recipe Use Case (Integration)', () => {
 
     const result = await sut.execute(recipeData)
 
-    expect(result.recipe.id).toEqual(expect.any(Number))
+    expect(result.recipe.id).toEqual(expect.any(String))
 
     const recipeInDb = await db
       .select()

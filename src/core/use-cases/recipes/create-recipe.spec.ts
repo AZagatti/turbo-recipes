@@ -15,7 +15,7 @@ describe('Create Recipe Use Case', () => {
     sut = new CreateRecipeUseCase(recipesRepository, usersRepository)
 
     usersRepository.items.push({
-      id: 1,
+      id: 'user-1',
       name: 'John Doe',
       email: 'john.doe@email.com',
       passwordHash: 'hashed-password',
@@ -29,10 +29,10 @@ describe('Create Recipe Use Case', () => {
       title: 'Bolo de Chocolate',
       ingredients: 'Farinha, ovos, chocolate',
       method: 'Misture tudo e asse.',
-      authorId: 1,
+      authorId: 'user-1',
     })
 
-    expect(result.recipe.id).toEqual(expect.any(Number))
+    expect(result.recipe.id).toEqual(expect.any(String))
     expect(recipesRepository.items[0].title).toEqual('Bolo de Chocolate')
   })
   it('throws an error if author does not exist', async () => {
@@ -41,7 +41,7 @@ describe('Create Recipe Use Case', () => {
         title: 'Receita Sem Autor',
         ingredients: '...',
         method: '...',
-        authorId: 99,
+        authorId: 'not-found',
       }),
     ).rejects.toBeInstanceOf(AuthorNotFoundError)
   })

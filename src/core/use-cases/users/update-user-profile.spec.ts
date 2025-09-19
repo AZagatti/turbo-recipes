@@ -19,7 +19,7 @@ describe('Update User Profile Use Case', () => {
     sut = new UpdateUserProfileUseCase(usersRepository, hashComparer, hasher)
 
     const user = makeUser({
-      id: 1,
+      id: 'user-1',
       passwordHash: 'old-password-hashed',
     })
     usersRepository.items.push(user)
@@ -27,7 +27,7 @@ describe('Update User Profile Use Case', () => {
 
   it('updates the user name', async () => {
     const result = await sut.execute({
-      userId: 1,
+      userId: 'user-1',
       data: { name: 'John Smith' },
     })
 
@@ -37,7 +37,7 @@ describe('Update User Profile Use Case', () => {
 
   it('updates the user password', async () => {
     const result = await sut.execute({
-      userId: 1,
+      userId: 'user-1',
       data: {
         oldPassword: 'old-password',
         newPassword: 'new-password',
@@ -50,7 +50,7 @@ describe('Update User Profile Use Case', () => {
   it('throws an error with wrong old password', async () => {
     await expect(
       sut.execute({
-        userId: 1,
+        userId: 'user-1',
         data: {
           oldPassword: 'wrong-old-password',
           newPassword: 'new-password',
@@ -62,7 +62,7 @@ describe('Update User Profile Use Case', () => {
   it('throws an error if user is not found', async () => {
     await expect(
       sut.execute({
-        userId: 99,
+        userId: 'not-found',
         data: { name: 'New Name' },
       }),
     ).rejects.toBeInstanceOf(ResourceNotFoundError)

@@ -13,6 +13,7 @@ const envSchema = z.object({
   MAIL_FROM: z.email(),
   REDIS_URL: z.url(),
   RUN_WORKER_IN_API: z.coerce.boolean().default(false),
+  ENABLE_CLUSTER: z.coerce.boolean().default(false),
 })
 
 const _env = envSchema.safeParse(process.env)

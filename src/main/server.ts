@@ -7,7 +7,7 @@ import { connection } from '@/infra/db'
 
 const numCPUs = cpus().length
 
-if (cluster.isPrimary && env.NODE_ENV === 'production') {
+if (cluster.isPrimary && env.ENABLE_CLUSTER) {
   console.log(`Primary ${process.pid} is running`)
 
   for (let i = 0; i < numCPUs; i++) {

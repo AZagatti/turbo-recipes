@@ -3,7 +3,7 @@ import { errorResponseSchema } from './shared-schemas'
 
 export const userSchema = z
   .object({
-    id: z.number(),
+    id: z.uuid(),
     name: z.string(),
     email: z.email(),
     createdAt: z.coerce.date(),

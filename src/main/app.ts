@@ -49,7 +49,14 @@ app.register(fastifyRateLimit, {
 app.setValidatorCompiler(validatorCompiler)
 app.setSerializerCompiler(serializerCompiler)
 
-app.register(fastifyHelmet)
+app.register(fastifyHelmet, {
+  contentSecurityPolicy: {
+    directives: {
+      ...fastifyHelmet.contentSecurityPolicy.getDefaultDirectives(),
+      'script-src': ["'self'", "'unsafe-inline'"],
+    },
+  },
+})
 app.register(swaggerPlugin)
 
 app.register(fastifyJwt, {

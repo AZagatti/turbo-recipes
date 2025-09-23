@@ -12,7 +12,7 @@ export const swaggerPlugin = fastifyPlugin(async (app: FastifyInstance) => {
     openapi: {
       info: {
         title: 'Turbo Recipes API',
-        description: 'API para o app de receitas',
+        description: 'API for recipe application',
         version: '1.0.0',
       },
     },
@@ -23,7 +23,7 @@ export const swaggerPlugin = fastifyPlugin(async (app: FastifyInstance) => {
   app.register(scalar, {
     routePrefix: '/docs',
     configuration: {
-      theme: 'fastify',
+      theme: 'kepler',
     },
   })
 })

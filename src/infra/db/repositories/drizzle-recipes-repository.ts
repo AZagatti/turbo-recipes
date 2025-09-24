@@ -1,7 +1,7 @@
 import { RecipesRepository } from '@/core/repositories/recipes-repository'
 import { NewRecipe, Recipe } from '@/core/models'
 import { db } from '..'
-import { recipes } from '../schema'
+import { recipes, users } from '../schema'
 import { inject, injectable } from 'tsyringe'
 import { desc, eq, sql } from 'drizzle-orm'
 import { CacheProvider } from '@/core/contracts/cache-provider'
@@ -77,9 +77,17 @@ export class DrizzleRecipesRepository implements RecipesRepository {
   }
 
   async create(data: NewRecipe): Promise<Recipe> {
-    const result = await db.insert(recipes).values(data).returning()
+    const [newRecipe] = await db.insert(recipes).values(data).returning({
+      id: recipes.id,
+    })
 
-    return result[0]
+    const recipeWithAuthor = await this.findById(newRecipe.id)
+
+    if (!recipeWithAuthor) {
+      throw new Error('Failed to fetch newly created recipe.')
+    }
+
+    return recipeWithAuthor
   }
 
   async save(recipe: Recipe): Promise<void> {
@@ -118,8 +126,22 @@ export class DrizzleRecipesRepository implements RecipesRepository {
     const searchQuery = sql`to_tsquery('portuguese', ${formattedQuery})`
 
     const foundRecipes = await db
-      .select()
+      .select({
+        id: recipes.id,
+        title: recipes.title,
+        ingredients: recipes.ingredients,
+        method: recipes.method,
+        authorId: recipes.authorId,
+        createdAt: recipes.createdAt,
+        updatedAt: recipes.updatedAt,
+        searchableText: recipes.searchableText,
+        author: {
+          id: users.id,
+          name: users.name,
+        },
+      })
       .from(recipes)
+      .innerJoin(users, eq(recipes.authorId, users.id))
       .where(sql`${recipes.searchableText} @@ ${searchQuery}`)
       .orderBy(desc(sql`ts_rank(${recipes.searchableText}, ${searchQuery})`))
       .limit(limit)

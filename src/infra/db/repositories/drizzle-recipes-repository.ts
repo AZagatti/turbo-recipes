@@ -31,6 +31,7 @@ export class DrizzleRecipesRepository implements RecipesRepository {
     const recipesList = await db.query.recipes.findMany({
       limit,
       offset: (page - 1) * limit,
+      orderBy: [desc(recipes.createdAt), desc(recipes.id)],
       with: {
         author: {
           columns: {

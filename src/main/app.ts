@@ -17,25 +17,19 @@ import {
   validatorCompiler,
   ZodTypeProvider,
 } from 'fastify-type-provider-zod'
-import Redis from 'ioredis'
+import { redis } from '@/infra/cache/redis'
 import z, { ZodError } from 'zod'
 import { swaggerPlugin } from './plugins/swagger'
 
 const app = fastify({
-  logger:
-    env.NODE_ENV === 'development'
-      ? {
-          transport: {
-            target: 'pino-pretty',
-          },
-        }
-      : true,
+  logger: ['development', 'test'].includes(env.NODE_ENV)
+    ? {
+        transport: {
+          target: 'pino-pretty',
+        },
+      }
+    : true,
 }).withTypeProvider<ZodTypeProvider>()
-
-const redis = new Redis(env.REDIS_URL, {
-  connectTimeout: 500,
-  maxRetriesPerRequest: 3,
-})
 
 app.register(fastifyRateLimit, {
   max: 100,

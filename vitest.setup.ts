@@ -1,8 +1,14 @@
 import 'reflect-metadata'
-import { beforeAll } from 'vitest'
+import { beforeAll, vi } from 'vitest'
 import { db } from './src/infra/db'
 import { redis } from './src/infra/cache/redis'
 import { sql } from 'drizzle-orm'
+
+vi.mock('./src/infra/cache/redis', () =>
+  process.env.TEST_ENV === 'unit'
+    ? { redis: {} }
+    : vi.importActual('./src/infra/cache/redis'),
+)
 
 beforeAll(async () => {
   if (process.env.TEST_ENV !== 'unit') {

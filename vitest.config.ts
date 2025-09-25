@@ -19,5 +19,16 @@ export default defineConfig({
     setupFiles: ['./vitest.setup.ts'],
     globalSetup: !isUnitTestRun ? './vitest.global-setup.ts' : undefined,
     fileParallelism: !isUnitTestRun ? false : true,
+    coverage: {
+      provider: 'v8',
+      reporter: ['text', 'html', 'json-summary', 'json'],
+      reportOnFailure: true,
+      include: ['src/core/use-cases/**'],
+      exclude: [
+        'src/core/use-cases/**/_test/**',
+        'src/core/use-cases/**/*.test.*',
+        'src/core/use-cases/usecase.ts',
+      ],
+    },
   },
 })

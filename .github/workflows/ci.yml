@@ -9,6 +9,17 @@ jobs:
   build-and-test:
     runs-on: ubuntu-latest
 
+    env:
+      DATABASE_URL: 'postgresql://docker:docker@localhost:5433/turbo_recipes_test'
+      JWT_SECRET: 'random'
+      REDIS_URL: 'redis://localhost:6380'
+      RESEND_API_KEY: 'fake-key'
+      MAIL_FROM: 'test@example.com'
+
+    permissions:
+      contents: read
+      pull-requests: write
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -32,10 +43,11 @@ jobs:
         run: pnpm tsc --noEmit
 
       - name: Run tests
-        env:
-          DATABASE_URL: 'postgresql://docker:docker@localhost:5433/turbo_recipes_test'
-          JWT_SECRET: 'random'
-          REDIS_URL: 'redis://localhost:6379'
-          RESEND_API_KEY: 'fake-key'
-          MAIL_FROM: 'test@example.com'
         run: pnpm test:ci
+
+      - name: Generate coverage report
+        run: pnpm test:coverage
+
+      - name: Report Coverage
+        if: always() && github.event_name == 'pull_request'
+        uses: davelosert/vitest-coverage-report-action@v2

@@ -1,12 +1,12 @@
-import { it, describe, expect, beforeAll, beforeEach } from 'vitest'
-import { DrizzleUsersRepository } from '@/infra/db/repositories/drizzle-users-repository'
-import { DrizzleRecipesRepository } from '@/infra/db/repositories/drizzle-recipes-repository'
-import { CreateRecipeUseCase } from './create-recipe'
 import { db } from '@/infra/db'
-import { users, recipes } from '@/infra/db/schema'
+import { DrizzleRecipesRepository } from '@/infra/db/repositories/drizzle-recipes-repository'
+import { DrizzleUsersRepository } from '@/infra/db/repositories/drizzle-users-repository'
+import { recipes, users } from '@/infra/db/schema'
 import { faker } from '@faker-js/faker'
 import { eq } from 'drizzle-orm'
+import { beforeAll, describe, expect, it } from 'vitest'
 import { FakeCacheProvider } from '../_test/fake-cache-provider'
+import { CreateRecipeUseCase } from './create-recipe'
 
 let usersRepository: DrizzleUsersRepository
 let cacheProvider: FakeCacheProvider
@@ -19,11 +19,6 @@ describe('Create Recipe Use Case (Integration)', () => {
     usersRepository = new DrizzleUsersRepository()
     recipesRepository = new DrizzleRecipesRepository(cacheProvider)
     sut = new CreateRecipeUseCase(recipesRepository, usersRepository)
-  })
-
-  beforeEach(async () => {
-    await db.delete(recipes)
-    await db.delete(users)
   })
 
   it('creates a new recipe and persists it in the database', async () => {

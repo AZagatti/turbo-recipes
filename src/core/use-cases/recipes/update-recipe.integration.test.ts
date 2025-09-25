@@ -1,13 +1,13 @@
-import { it, describe, expect, beforeAll, beforeEach } from 'vitest'
+import { db } from '@/infra/db'
 import { DrizzleRecipesRepository } from '@/infra/db/repositories/drizzle-recipes-repository'
 import { DrizzleUsersRepository } from '@/infra/db/repositories/drizzle-users-repository'
-import { UpdateRecipeUseCase } from './update-recipe'
-import { db } from '@/infra/db'
-import { users, recipes } from '@/infra/db/schema'
+import { recipes } from '@/infra/db/schema'
 import { faker } from '@faker-js/faker'
 import { eq } from 'drizzle-orm'
-import { makeRecipe } from '../_test/recipes-factory'
+import { beforeAll, describe, expect, it } from 'vitest'
 import { FakeCacheProvider } from '../_test/fake-cache-provider'
+import { makeRecipe } from '../_test/recipes-factory'
+import { UpdateRecipeUseCase } from './update-recipe'
 
 let recipesRepository: DrizzleRecipesRepository
 let cacheProvider: FakeCacheProvider
@@ -20,11 +20,6 @@ describe('Update Recipe Use Case (Integration)', () => {
     recipesRepository = new DrizzleRecipesRepository(cacheProvider)
     usersRepository = new DrizzleUsersRepository()
     sut = new UpdateRecipeUseCase(recipesRepository)
-  })
-
-  beforeEach(async () => {
-    await db.delete(recipes)
-    await db.delete(users)
   })
 
   it('updates a recipe in the database', async () => {

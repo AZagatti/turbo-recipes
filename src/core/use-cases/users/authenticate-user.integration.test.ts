@@ -1,4 +1,4 @@
-import { it, describe, expect, beforeAll, beforeEach } from 'vitest'
+import { it, describe, expect, beforeAll } from 'vitest'
 import { AuthenticateUserUseCase } from './authenticate-user'
 import { DrizzleUsersRepository } from '@/infra/db/repositories/drizzle-users-repository'
 import { BcryptHasher } from '@/infra/cryptography/bcrypt-hasher'
@@ -14,16 +14,11 @@ let tokenGenerator: JoseTokenGenerator
 let sut: AuthenticateUserUseCase
 
 describe('Authenticate User Use Case (Integration)', () => {
-  beforeAll(() => {
+  beforeAll(async () => {
     usersRepository = new DrizzleUsersRepository()
     hasher = new BcryptHasher()
     tokenGenerator = new JoseTokenGenerator()
     sut = new AuthenticateUserUseCase(usersRepository, hasher, tokenGenerator)
-  })
-
-  beforeEach(async () => {
-    await db.delete(users)
-
     const passwordHash = await hash('password123', 8)
     await db.insert(users).values({
       name: faker.person.fullName(),

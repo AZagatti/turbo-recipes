@@ -1,8 +1,6 @@
-import { it, describe, expect, beforeAll, beforeEach } from 'vitest'
+import { it, describe, expect, beforeAll } from 'vitest'
 import { DrizzleUsersRepository } from '@/infra/db/repositories/drizzle-users-repository'
 import { GetUserProfileUseCase } from './get-user-profile'
-import { db } from '@/infra/db'
-import { users } from '@/infra/db/schema'
 import { faker } from '@faker-js/faker'
 
 let usersRepository: DrizzleUsersRepository
@@ -12,10 +10,6 @@ describe('Get User Profile Use Case (Integration)', () => {
   beforeAll(() => {
     usersRepository = new DrizzleUsersRepository()
     sut = new GetUserProfileUseCase(usersRepository)
-  })
-
-  beforeEach(async () => {
-    await db.delete(users)
   })
 
   it('gets a user profile from the database', async () => {

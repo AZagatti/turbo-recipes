@@ -6,7 +6,6 @@ import { db } from '@/infra/db'
 import { users } from '@/infra/db/schema'
 import { eq } from 'drizzle-orm'
 import { faker } from '@faker-js/faker'
-import { beforeEach } from 'node:test'
 
 let usersRepository: DrizzleUsersRepository
 let hasher: BcryptHasher
@@ -17,10 +16,6 @@ describe('Register User Use Case (Integration)', () => {
     usersRepository = new DrizzleUsersRepository()
     hasher = new BcryptHasher()
     sut = new RegisterUserUseCase(usersRepository, hasher)
-  })
-
-  beforeEach(async () => {
-    await db.delete(users)
   })
 
   it('creates a new user and persists it in the database', async () => {

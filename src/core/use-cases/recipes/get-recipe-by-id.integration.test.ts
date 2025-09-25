@@ -1,11 +1,9 @@
-import { it, describe, expect, beforeAll, beforeEach } from 'vitest'
 import { DrizzleRecipesRepository } from '@/infra/db/repositories/drizzle-recipes-repository'
-import { GetRecipeByIdUseCase } from './get-recipe-by-id'
-import { db } from '@/infra/db'
-import { users, recipes } from '@/infra/db/schema'
-import { faker } from '@faker-js/faker'
 import { DrizzleUsersRepository } from '@/infra/db/repositories/drizzle-users-repository'
+import { faker } from '@faker-js/faker'
+import { beforeAll, describe, expect, it } from 'vitest'
 import { FakeCacheProvider } from '../_test/fake-cache-provider'
+import { GetRecipeByIdUseCase } from './get-recipe-by-id'
 
 let recipesRepository: DrizzleRecipesRepository
 let cacheProvider: FakeCacheProvider
@@ -18,11 +16,6 @@ describe('Get Recipe By Id Use Case (Integration)', () => {
     recipesRepository = new DrizzleRecipesRepository(cacheProvider)
     usersRepository = new DrizzleUsersRepository()
     sut = new GetRecipeByIdUseCase(recipesRepository)
-  })
-
-  beforeEach(async () => {
-    await db.delete(recipes)
-    await db.delete(users)
   })
 
   it('gets a recipe by its id from the database', async () => {

@@ -29,9 +29,6 @@ describe('Reset Password Use Case (Integration)', () => {
   })
 
   beforeEach(async () => {
-    await db.delete(passwordResetTokens)
-    await db.delete(users)
-
     user = await usersRepository.create(
       makeNewUser({
         passwordHash: await hasher.hash('old-password'),

@@ -1,12 +1,12 @@
 import { db } from '@/infra/db'
 import { DrizzlePasswordResetTokensRepository } from '@/infra/db/repositories/drizzle-password-reset-tokens-repository'
 import { DrizzleUsersRepository } from '@/infra/db/repositories/drizzle-users-repository'
-import { passwordResetTokens, users } from '@/infra/db/schema'
+import { passwordResetTokens } from '@/infra/db/schema'
 import { eq } from 'drizzle-orm'
-import { beforeAll, beforeEach, describe, expect, it } from 'vitest'
+import { beforeAll, describe, expect, it } from 'vitest'
+import { FakeQueueProvider } from '../_test/fake-queue-provider'
 import { makeNewUser } from '../_test/users-factory'
 import { ForgotPasswordUseCase } from './forgot-password'
-import { FakeQueueProvider } from '../_test/fake-queue-provider'
 
 let usersRepository: DrizzleUsersRepository
 let passwordResetTokensRepository: DrizzlePasswordResetTokensRepository
@@ -23,11 +23,6 @@ describe('Forgot Password Use Case (Integration)', () => {
       passwordResetTokensRepository,
       queueProvider,
     )
-  })
-
-  beforeEach(async () => {
-    await db.delete(passwordResetTokens)
-    await db.delete(users)
   })
 
   it('creates a password reset token and persists it in the database', async () => {

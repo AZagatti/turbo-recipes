@@ -1,12 +1,10 @@
-import { it, describe, expect, beforeAll, beforeEach } from 'vitest'
 import { DrizzleRecipesRepository } from '@/infra/db/repositories/drizzle-recipes-repository'
 import { DrizzleUsersRepository } from '@/infra/db/repositories/drizzle-users-repository'
-import { ListRecipesUseCase } from './list-recipes'
-import { db } from '@/infra/db'
-import { users, recipes } from '@/infra/db/schema'
 import { faker } from '@faker-js/faker'
-import { createManyRecipes } from '../_test/recipes-factory'
+import { beforeAll, describe, expect, it } from 'vitest'
 import { FakeCacheProvider } from '../_test/fake-cache-provider'
+import { createManyRecipes } from '../_test/recipes-factory'
+import { ListRecipesUseCase } from './list-recipes'
 
 let recipesRepository: DrizzleRecipesRepository
 let usersRepository: DrizzleUsersRepository
@@ -19,11 +17,6 @@ describe('List Recipes Use Case (Integration)', () => {
     recipesRepository = new DrizzleRecipesRepository(cacheProvider)
     usersRepository = new DrizzleUsersRepository()
     sut = new ListRecipesUseCase(recipesRepository)
-  })
-
-  beforeEach(async () => {
-    await db.delete(recipes)
-    await db.delete(users)
   })
 
   it('lists paginated recipes from the database', async () => {
@@ -48,7 +41,8 @@ describe('List Recipes Use Case (Integration)', () => {
     })
 
     expect(result.recipes).toHaveLength(2)
-    expect(result.recipes[0].title).toEqual('Receita de Integração 21')
+    expect(result.recipes[0].title).toEqual('Receita de Integração 2')
+    expect(result.recipes[1].title).toEqual('Receita de Integração 1')
     expect(result.recipes[0].author?.name).toEqual('John Doe')
   })
 })

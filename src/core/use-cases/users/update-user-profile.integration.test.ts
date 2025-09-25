@@ -21,8 +21,6 @@ describe('Update User Profile Use Case (Integration)', () => {
   })
 
   beforeEach(async () => {
-    await db.delete(users)
-
     user = await usersRepository.create({
       name: 'John Doe',
       email: faker.internet.email(),

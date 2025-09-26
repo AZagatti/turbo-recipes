@@ -18,7 +18,7 @@ This document outlines the system design for the Turbo Recipes API, a platform f
 - **FR8:** An authenticated user must be able to retrieve their own profile information.
 - **FR9:** An authenticated user must be able to update their own profile information (name and password).
 - **FR10:** An authenticated user must be able to delete their own account.
-- **FR11 [v2]:** Users must be able to search for recipes by title or ingredients.
+- **FR11:** Users must be able to search for recipes by title or ingredients.
 - **FR12:** A user must be able to request a password reset for their email.
 - **FR13:** A user must be able to reset their password using a token sent to their email.
 
@@ -29,10 +29,6 @@ This document outlines the system design for the Turbo Recipes API, a platform f
 - **NFR2 - Consistency > Availability:** Data must be strongly consistent. This aligns with the CAP theorem, prioritizing that reads always return the most recently written data.
 - **NFR3 - Availability:** The system should aim for high availability (e.g., 99.9% uptime).
 - **NFR4 - Scalability (Initial):** The system should handle up to 10,000 users and 100,000 recipes, with peaks of 100 requests per second (RPS).
-
-### 1.3. Capacity Estimates (Out of Scope for MVP)
-
-*This section will be detailed in more complex projects, involving calculations for storage, memory, and bandwidth based on the scale requirements.*
 
 ---
 
@@ -54,21 +50,28 @@ graph TD
 ### 2.2. Data Model / Entities
 
 - **User:**
-  - `id`: (Primary Key)
-  - `name`: string
-  - `email`: string (unique)
-  - `password_hash`: string
-  - `created_at`: timestamp
-  - `updated_at`: timestamp
+  - `id`: uuid (Primary Key)
+  - `name`: varchar(255) (not null)
+  - `email`: varchar(255) (not null, unique)
+  - `password_hash`: varchar(255) (not null)
+  - `created_at`: timestamp (not null)
+  - `updated_at`: timestamp (not null)
 
 - **Recipe:**
-  - `id`: (Primary Key)
-  - `title`: string
-  - `ingredients`: text
-  - `method`: text
-  - `author_id`: (Foreign Key to User.id)
-  - `created_at`: timestamp
-  - `updated_at`: timestamp
+  - `id`: uuid (Primary Key)
+  - `title`: varchar(255) (not null)
+  - `ingredients`: text (not null)
+  - `method`: text (not null)
+  - `author_id`: uuid (Foreign Key to users.id, on delete: set null)
+  - `searchableText`: tsvector (generated column)
+  - `created_at`: timestamp (not null)
+  - `updated_at`: timestamp (not null)
+
+- **PasswordResetToken:**
+  - `id`: uuid (Primary Key)
+  - `token`: varchar(255) (not null, unique)
+  - `user_id`: uuid (Foreign Key to users.id, on delete: cascade)
+  - `expires_at`: timestamp (not null)
 
 - **Relationship:** A `User` can have many `Recipes` (One-to-Many).
 
@@ -90,7 +93,7 @@ The API will be RESTful and communicate using JSON.
     "password": "string"
   }
   ```
-- **Success Response:** `201 Created` with the created user object (excluding password).
+- **Success Response:** `201 Created` with a user object: `{ "user": { ... } }`
 - **Error Responses:** `400 Bad Request` (Invalid input), `409 Conflict` (Email already in use).
 
 #### `POST /sessions`
@@ -107,7 +110,7 @@ The API will be RESTful and communicate using JSON.
 
 #### `GET /me`
 - **Description:** Retrieves the profile of the currently authenticated user. (Requires authentication).
-- **Success Response:** `200 OK` with the user object (excluding password hash).
+- **Success Response:** `200 OK` with a user object: `{ "user": { ... } }`
 - **Error Responses:** `401 Unauthorized`.
 
 #### `PATCH /me`
@@ -121,7 +124,7 @@ The API will be RESTful and communicate using JSON.
   }
   ```
   *(Note: All fields are optional. If `newPassword` is provided, `oldPassword` is required).*
-- **Success Response:** `200 OK` with the updated user object.
+- **Success Response:** `200 OK` with an updated user object: `{ "user": { ... } }`
 - **Error Responses:** `400 Bad Request` (Invalid input), `401 Unauthorized`.
 
 #### `DELETE /me`
@@ -166,18 +169,18 @@ The API will be RESTful and communicate using JSON.
     "method": "string"
   }
   ```
-- **Success Response:** `201 Created` with the created recipe object.
+- **Success Response:** `201 Created` with a recipe object: `{ "recipe": { ... } }`
 - **Error Responses:** `400 Bad Request`, `401 Unauthorized`.
 
 #### `GET /recipes/:id`
 - **Description:** Retrieves a single recipe by its ID.
-- **Success Response:** `200 OK` with the recipe object.
+- **Success Response:** `200 OK` with a recipe object: `{ "recipe": { ... } }`
 - **Error Responses:** `404 Not Found`.
 
 #### `GET /recipes`
 - **Description:** Retrieves a list of recipes with pagination.
 - **Query Parameters:** `?page=1&limit=10`
-- **Success Response:** `200 OK` with a paginated list of recipes.
+- **Success Response:** `200 OK` with a paginated list of recipes: `{ "recipes": [ ... ] }`
 
 #### `PATCH /recipes/:id`
 - **Description:** Updates a recipe. (Requires authentication and ownership).
@@ -189,7 +192,7 @@ The API will be RESTful and communicate using JSON.
     "method": "string"
   }
   ```
-- **Success Response:** `200 OK` with the updated recipe object.
+- **Success Response:** `200 OK` with an updated recipe object: `{ "recipe": { ... } }`
 - **Error Responses:** `400 Bad Request`, `401 Unauthorized`, `403 Forbidden` (User is not the owner), `404 Not Found`.
 
 #### `DELETE /recipes/:id`
@@ -197,7 +200,31 @@ The API will be RESTful and communicate using JSON.
 - **Success Response:** `204 No Content`
 - **Error Responses:** `401 Unauthorized`, `403 Forbidden` (User is not the owner), `404 Not Found`.
 
-#### `GET /recipes/search` [v2]
+#### `GET /recipes/search`
 - **Description:** Searches for recipes by title or ingredients.
 - **Query Parameters:** `?q=bolo de chocolate&page=1&limit=10`
 - **Success Response:** `200 OK` with a paginated list of recipes, ordered by relevance.
+
+---
+
+## 4. Observability
+
+### 4.1. Goals
+
+To ensure the reliability and performance of the Turbo Recipes API in a production environment, we will implement an observability stack to answer the following key questions:
+- **System Health:** What is the current status of our service's resources (CPU, memory usage)?
+- **Performance/Latency:** Which API endpoints are the slowest? What is the average and p99 latency for each route?
+- **Throughput:** How many requests per second (RPS) is each endpoint handling?
+- **Error Rate:** What is the rate of successful (`2xx`) versus failed (`4xx`, `5xx`) responses?
+- **Root Cause Analysis:** When an error occurs, what is the full context (logs, traces) needed to debug it quickly?
+
+### 4.2. Chosen Stack
+
+For this project, we will adopt a modern, powerful, and widely-used open-source stack, instrumented via the OpenTelemetry standard.
+
+- **OpenTelemetry (OTel):** The standard for instrumenting our application. It allows us to generate and export logs, metrics, and traces in a vendor-neutral way.
+- **Prometheus:** A time-series database for collecting and storing **Metrics**.
+- **Loki:** A log aggregation system for collecting and storing **Logs**.
+- **Grafana:** A visualization tool to create dashboards that display data from both Prometheus and Loki.
+
+This stack, often called the "PLG Stack" (Prometheus, Loki, Grafana), provides a comprehensive, production-grade observability solution.

@@ -62,6 +62,13 @@ app.after(() => {
 })
 
 app.setErrorHandler((error, request, reply) => {
+  if (error && 'statusCode' in error && error.statusCode === 429) {
+    return reply.status(429).send({
+      message: 'Too many requests.',
+      statusCode: 429,
+      error: 'Too Many Requests',
+    })
+  }
   if (hasZodFastifySchemaValidationErrors(error)) {
     return reply.status(400).send({
       message: 'Validation error.',

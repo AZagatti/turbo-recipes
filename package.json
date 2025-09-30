@@ -7,9 +7,9 @@
   "scripts": {
     "build": "tsdown",
     "start:dev": "node --watch --import tsx --import ./src/infra/telemetry/index.ts src/main/server.ts",
-    "start:prod": "node --import ./dist/infra/telemetry/index.js dist/server.js",
+    "start:prod": "node --import ./dist/telemetry.js dist/server.js",
     "worker:dev": "node --watch --import tsx --import ./src/infra/telemetry/index.ts src/main/worker.ts",
-    "worker:prod": "node --import ./dist/infra/telemetry/index.js dist/worker.js",
+    "worker:prod": "node --import ./dist/telemetry.js dist/worker.js",
     "db:migrate": "drizzle-kit migrate",
     "lint": "eslint .",
     "test": "vitest",

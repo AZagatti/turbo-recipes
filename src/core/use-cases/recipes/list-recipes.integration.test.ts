@@ -30,7 +30,7 @@ describe('List Recipes Use Case (Integration)', () => {
       count: 22,
       recipesRepository,
       overrideFn: (index) => ({
-        title: `Receita de Integração ${index}`,
+        title: `Integration Recipe ${index}`,
         authorId: author.id,
       }),
     })
@@ -41,8 +41,8 @@ describe('List Recipes Use Case (Integration)', () => {
     })
 
     expect(result.recipes).toHaveLength(2)
-    expect(result.recipes[0].title).toEqual('Receita de Integração 2')
-    expect(result.recipes[1].title).toEqual('Receita de Integração 1')
+    expect(result.recipes[0].title).toEqual('Integration Recipe 2')
+    expect(result.recipes[1].title).toEqual('Integration Recipe 1')
     expect(result.recipes[0].author?.name).toEqual('John Doe')
   })
 })

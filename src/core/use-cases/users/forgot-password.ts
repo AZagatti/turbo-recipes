@@ -49,7 +49,7 @@ export class ForgotPasswordUseCase
       name: 'send-forgot-password-mail',
       payload: {
         to: user.email,
-        subject: 'Recuperação de Senha',
+        subject: 'Password Recovery',
         template: {
           name: 'forgot-password',
           payload: { token },

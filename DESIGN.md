@@ -202,7 +202,7 @@ The API will be RESTful and communicate using JSON.
 
 #### `GET /recipes/search`
 - **Description:** Searches for recipes by title or ingredients.
-- **Query Parameters:** `?q=bolo de chocolate&page=1&limit=10`
+- **Query Parameters:** `?q=chocolate cake&page=1&limit=10`
 - **Success Response:** `200 OK` with a paginated list of recipes, ordered by relevance.
 
 ---

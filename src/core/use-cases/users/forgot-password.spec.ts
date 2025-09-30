@@ -59,7 +59,7 @@ describe('Forgot Password Use Case', () => {
       name: 'send-forgot-password-mail',
       payload: {
         to: 'john.doe@email.com',
-        subject: 'Recuperação de Senha',
+        subject: 'Password Recovery',
         template: {
           name: 'forgot-password',
           payload: { token: tokenInDb.token },

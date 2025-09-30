@@ -26,19 +26,19 @@ describe('Create Recipe Use Case', () => {
 
   it('creates a new recipe', async () => {
     const result = await sut.execute({
-      title: 'Bolo de Chocolate',
-      ingredients: 'Farinha, ovos, chocolate',
-      method: 'Misture tudo e asse.',
+      title: 'Chocolate Cake',
+      ingredients: 'Flour, eggs, chocolate',
+      method: 'Mix everything and bake.',
       authorId: 'user-1',
     })
 
     expect(result.recipe.id).toEqual(expect.any(String))
-    expect(recipesRepository.items[0].title).toEqual('Bolo de Chocolate')
+    expect(recipesRepository.items[0].title).toEqual('Chocolate Cake')
   })
   it('throws an error if author does not exist', async () => {
     await expect(
       sut.execute({
-        title: 'Receita Sem Autor',
+        title: 'Recipe Without Author',
         ingredients: '...',
         method: '...',
         authorId: 'not-found',

@@ -24,14 +24,12 @@ describe('Update Recipe Use Case', () => {
       recipeId: recipe.id,
       authorId: 'user-1',
       data: {
-        title: 'Bolo de Cenoura Melhorado',
+        title: 'Carrot Cake',
       },
     })
 
-    expect(result.recipe.title).toEqual('Bolo de Cenoura Melhorado')
-    expect(recipesRepository.items[0].title).toEqual(
-      'Bolo de Cenoura Melhorado',
-    )
+    expect(result.recipe.title).toEqual('Carrot Cake')
+    expect(recipesRepository.items[0].title).toEqual('Carrot Cake')
   })
 
   it('throws an error if recipe is not found', async () => {
@@ -39,7 +37,7 @@ describe('Update Recipe Use Case', () => {
       sut.execute({
         recipeId: 'not-found',
         authorId: 'user-1',
-        data: { title: 'Novo Título' },
+        data: { title: 'New Title' },
       }),
     ).rejects.toBeInstanceOf(ResourceNotFoundError)
   })
@@ -49,7 +47,7 @@ describe('Update Recipe Use Case', () => {
       sut.execute({
         recipeId: recipe.id,
         authorId: 'not-found',
-        data: { title: 'Novo Título' },
+        data: { title: 'New Title' },
       }),
     ).rejects.toBeInstanceOf(NotAllowedError)
   })

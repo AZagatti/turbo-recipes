@@ -32,8 +32,8 @@ describe('Update Recipe Use Case (Integration)', () => {
     const createdRecipe = await recipesRepository.create(
       makeRecipe({
         authorId: author.id,
-        title: 'Título Original',
-        ingredients: 'Ingredientes Originais',
+        title: 'Original Title',
+        ingredients: 'Original Ingredients',
       }),
     )
 
@@ -41,7 +41,7 @@ describe('Update Recipe Use Case (Integration)', () => {
       recipeId: createdRecipe.id,
       authorId: author.id,
       data: {
-        title: 'Título Atualizado',
+        title: 'Updated Title',
       },
     })
 
@@ -51,7 +51,7 @@ describe('Update Recipe Use Case (Integration)', () => {
       .where(eq(recipes.id, createdRecipe.id))
 
     expect(recipeInDb).toHaveLength(1)
-    expect(recipeInDb[0].title).toEqual('Título Atualizado')
-    expect(recipeInDb[0].ingredients).toEqual('Ingredientes Originais')
+    expect(recipeInDb[0].title).toEqual('Updated Title')
+    expect(recipeInDb[0].ingredients).toEqual('Original Ingredients')
   })
 })

@@ -16,7 +16,7 @@ describe('List Recipes Use Case', () => {
     await createManyRecipes({
       count: 22,
       recipesRepository,
-      overrideFn: (index) => ({ title: `Receita ${index}` }),
+      overrideFn: (index) => ({ title: `Recipe ${index}` }),
     })
 
     const result = await sut.execute({
@@ -25,14 +25,14 @@ describe('List Recipes Use Case', () => {
     })
 
     expect(result.recipes).toHaveLength(20)
-    expect(result.recipes[0].title).toEqual('Receita 1')
+    expect(result.recipes[0].title).toEqual('Recipe 1')
   })
 
   it('lists recipes on the second page', async () => {
     await createManyRecipes({
       count: 22,
       recipesRepository,
-      overrideFn: (index) => ({ title: `Receita ${index}` }),
+      overrideFn: (index) => ({ title: `Recipe ${index}` }),
     })
 
     const result = await sut.execute({
@@ -41,7 +41,7 @@ describe('List Recipes Use Case', () => {
     })
 
     expect(result.recipes).toHaveLength(2)
-    expect(result.recipes[0].title).toEqual('Receita 21')
-    expect(result.recipes[1].title).toEqual('Receita 22')
+    expect(result.recipes[0].title).toEqual('Recipe 21')
+    expect(result.recipes[1].title).toEqual('Recipe 22')
   })
 })

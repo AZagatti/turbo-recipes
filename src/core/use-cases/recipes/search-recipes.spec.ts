@@ -13,20 +13,20 @@ describe('Search Recipes Use Case', () => {
 
     await recipesRepository.create(
       makeRecipe({
-        title: 'Bolo de Chocolate Formigueiro',
-        ingredients: 'ovos, farinha, chocolate granulado',
+        title: 'Chocolate Cake',
+        ingredients: 'eggs, flour, chocolate sprinkles, cocoa powder',
       }),
     )
     await recipesRepository.create(
       makeRecipe({
-        title: 'Torta de Frango com Requeijão',
-        ingredients: 'frango desfiado, massa podre, requeijão',
+        title: 'Chicken Pie with Cream Cheese',
+        ingredients: 'shredded chicken, pie crust, cream cheese',
       }),
     )
     await recipesRepository.create(
       makeRecipe({
-        title: 'Mousse de Chocolate Amargo',
-        ingredients: 'chocolate em pó, creme de leite',
+        title: 'Dark Chocolate Mousse',
+        ingredients: 'chocolate powder, heavy cream',
       }),
     )
   })
@@ -45,18 +45,18 @@ describe('Search Recipes Use Case', () => {
 
   it('finds recipes by ingredients', async () => {
     const { recipes } = await sut.execute({
-      query: 'requeijão',
+      query: 'cream cheese',
       page: 1,
       limit: 10,
     })
 
     expect(recipes).toHaveLength(1)
-    expect(recipes[0].title).toContain('Torta de Frango')
+    expect(recipes[0].title).toContain('Chicken Pie')
   })
 
   it('returns a paginated list of recipes', async () => {
     await recipesRepository.create(
-      makeRecipe({ title: 'Brigadeiro de Chocolate' }),
+      makeRecipe({ title: 'Chocolate Brigadeiro' }),
     )
 
     const { recipes } = await sut.execute({

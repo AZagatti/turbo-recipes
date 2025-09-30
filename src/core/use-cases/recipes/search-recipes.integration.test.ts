@@ -25,21 +25,21 @@ describe('Search Recipes Use Case (Integration)', () => {
     await recipesRepository.create(
       makeRecipe({
         authorId: user.id,
-        title: 'Torta de Frango',
-        ingredients: 'frango, massa, catupiry',
+        title: 'Chicken Pie',
+        ingredients: 'chicken, dough, catupiry',
       }),
     )
     await recipesRepository.create(
       makeRecipe({
         authorId: user.id,
-        title: 'Salgado de Catupiry',
-        ingredients: 'massa, queijo',
+        title: 'Catupiry Savory Snack',
+        ingredients: 'dough, cheese',
       }),
     )
     await recipesRepository.create(
       makeRecipe({
         authorId: user.id,
-        title: 'Bolo de Chocolate',
+        title: 'Chocolate Cake',
       }),
     )
 
@@ -50,7 +50,7 @@ describe('Search Recipes Use Case (Integration)', () => {
     })
 
     expect(recipes).toHaveLength(2)
-    expect(recipes[0].title).toEqual('Salgado de Catupiry')
-    expect(recipes[1].title).toEqual('Torta de Frango')
+    expect(recipes[0].title).toEqual('Catupiry Savory Snack')
+    expect(recipes[1].title).toEqual('Chicken Pie')
   })
 })

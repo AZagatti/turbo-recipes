@@ -54,7 +54,7 @@ describe('Update Recipe (e2e)', () => {
 
   it('updates a recipe owned by the user', async () => {
     const updatedData = {
-      title: 'Receita Atualizada pelo Dono',
+      title: 'Recipe Updated by Owner',
     }
     const response = await request(app.server)
       .patch(`/recipes/${recipeFromUser1.id}`)
@@ -70,7 +70,7 @@ describe('Update Recipe (e2e)', () => {
 
   it('returns 403 Forbidden when updating a recipe owned by another user', async () => {
     const updatedData = {
-      title: 'Tentativa de Ataque',
+      title: 'Attack Attempt',
     }
     const response = await request(app.server)
       .patch(`/recipes/${recipeFromUser1.id}`)

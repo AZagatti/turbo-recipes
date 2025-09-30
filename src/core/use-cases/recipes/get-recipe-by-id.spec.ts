@@ -22,9 +22,9 @@ describe('Get Recipe By Id Use Case', () => {
       passwordHash: 'hashed-password',
     })
     recipe = await recipesRepository.create({
-      title: 'Bolo de Chocolate',
-      ingredients: 'Farinha, ovos, chocolate',
-      method: 'Misture tudo e asse.',
+      title: 'Chocolate Cake',
+      ingredients: 'Flour, eggs, chocolate',
+      method: 'Mix everything and bake.',
       authorId: user.id,
     })
   })
@@ -34,8 +34,8 @@ describe('Get Recipe By Id Use Case', () => {
       recipeId: recipe.id,
     })
 
-    expect(result.recipe.title).toEqual('Bolo de Chocolate')
-    expect(result.recipe.method).toEqual('Misture tudo e asse.')
+    expect(result.recipe.title).toEqual('Chocolate Cake')
+    expect(result.recipe.method).toEqual('Mix everything and bake.')
   })
 
   it('throws an error if recipe is not found', async () => {

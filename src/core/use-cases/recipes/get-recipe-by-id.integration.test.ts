@@ -26,7 +26,7 @@ describe('Get Recipe By Id Use Case (Integration)', () => {
     })
 
     const createdRecipe = await recipesRepository.create({
-      title: 'Bolo de Integração',
+      title: 'Chocolate Cake',
       ingredients: faker.lorem.words(10),
       method: faker.lorem.paragraphs(2),
       authorId: author.id,
@@ -37,7 +37,7 @@ describe('Get Recipe By Id Use Case (Integration)', () => {
     })
 
     expect(result.recipe.id).toEqual(createdRecipe.id)
-    expect(result.recipe.title).toEqual('Bolo de Integração')
+    expect(result.recipe.title).toEqual('Chocolate Cake')
     expect(result.recipe.author?.name).toEqual(author.name)
   })
 })

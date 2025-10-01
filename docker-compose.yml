@@ -1,6 +1,6 @@
 services:
   postgres:
-    image: bitnami/postgresql:latest
+    image: postgres:17
     ports:
       - "5432:5432"
     environment:
@@ -11,7 +11,7 @@ services:
       - pgdata:/var/lib/postgresql/data
 
   redis:
-    image: bitnami/redis:latest
+    image: redis:7-alpine
     ports:
       - "6379:6379"
     environment:
@@ -20,7 +20,7 @@ services:
       - redisdata:/bitnami/redis/data
 
   prometheus:
-    image: prom/prometheus:latest
+    image: prom/prometheus:v3.6.0
     container_name: prometheus
     ports:
       - "9090:9090"
@@ -30,13 +30,13 @@ services:
       - "--config.file=/etc/prometheus/prometheus.yml"
 
   loki:
-    image: grafana/loki:latest
+    image: grafana/loki:3.5.5
     container_name: loki
     ports:
       - "3100:3100"
 
   grafana:
-    image: grafana/grafana:latest
+    image: grafana/grafana:12.2.0
     container_name: grafana
     ports:
       - "3000:3000"

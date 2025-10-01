@@ -1,24 +1,24 @@
 services:
   postgres-test:
-    image: bitnami/postgresql:latest
+    image: postgres:17
     ports:
-      - '5433:5432'
+      - "5433:5432"
     environment:
       - POSTGRES_USER=docker
       - POSTGRES_PASSWORD=docker
       - POSTGRES_DB=turbo_recipes_test
     healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -U docker -d turbo_recipes_test']
+      test: ["CMD-SHELL", "pg_isready -U docker -d turbo_recipes_test"]
       interval: 2s
       timeout: 5s
       retries: 10
 
   redis-test:
-    image: redis:alpine
+    image: redis:7-alpine
     ports:
-      - '6380:6379'
+      - "6380:6379"
     healthcheck:
-      test: ['CMD', 'redis-cli', 'ping']
+      test: ["CMD", "redis-cli", "ping"]
       interval: 2s
       timeout: 5s
       retries: 10

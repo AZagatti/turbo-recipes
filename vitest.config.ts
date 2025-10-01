@@ -21,7 +21,7 @@ export default defineConfig({
     fileParallelism: !isUnitTestRun ? false : true,
     coverage: {
       provider: 'v8',
-      reporter: ['text', 'html', 'json-summary', 'json'],
+      reporter: ['text', 'html', 'json-summary', 'json', 'lcov'],
       reportOnFailure: true,
       include: ['src/core/use-cases/**'],
       exclude: [
